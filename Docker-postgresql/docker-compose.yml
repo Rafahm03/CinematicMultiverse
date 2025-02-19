@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  api: 
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://pg:5432/app
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=12345678
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8085:8080"
+    container_name: api-spring
+    depends_on:
+      pg:
+        condition: service_healthy
+
+  pg:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_DB=app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    container_name: postgresql-spring
+    restart: on-failure
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-spring
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 1
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+          
+volumes:
+  pgdata:
+  pgadmin-data:
