@@ -17,14 +17,13 @@ import java.io.IOException;
 @Log
 @Service
 public class SendGridMailSender {
-
     @Value("${sendgrid.api.key}")
     private String sendgridApiKey;
 
 
     @Async
     public void sendMail(String to, String subject, String message) throws IOException {
-        Email from = new Email("hernandez.meraf23@triana.salesianos.edu");
+        Email from = new Email("hernandez.meraf23.salesianos.edu");
         Email emailTo = new Email(to);
         Content content = new Content("text/plain", message);
         Mail mail = new Mail(from, subject, emailTo, content);
@@ -45,3 +44,4 @@ public class SendGridMailSender {
     }
 
 }
+

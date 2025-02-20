@@ -49,6 +49,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+
     public String generateRandomActivationCode() {
         return UUID.randomUUID().toString();
     }
