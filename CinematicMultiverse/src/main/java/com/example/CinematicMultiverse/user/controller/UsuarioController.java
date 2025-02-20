@@ -9,6 +9,7 @@ import com.example.CinematicMultiverse.user.dto.CreateUserRequest;
 import com.example.CinematicMultiverse.user.dto.LoginRequest;
 import com.example.CinematicMultiverse.user.dto.UserResponse;
 import com.example.CinematicMultiverse.user.model.Usuario;
+import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
 import com.example.CinematicMultiverse.user.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,10 +24,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioService userService;
+    private final UsuarioRepository usuarioRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
@@ -43,6 +47,11 @@ public class UsuarioController {
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(loginRequest.username());
+        if (usuarioOpt.isEmpty() || !usuarioOpt.get().isEnabled()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Cuenta no activada o usuario no encontrado");
+        }
 
         Authentication authentication =
                 authenticationManager.authenticate(
@@ -77,10 +86,11 @@ public class UsuarioController {
     @PostMapping("/activate/account/")
     public ResponseEntity<?> activateAccount(@RequestBody ActivatedAccountRequest req) {
         String token = req.token();
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(UserResponse.of(userService.activateAccount(token)));
-    }
+        Usuario usuarioActivado = usuarioService.activateAccount(token);
 
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Cuenta activada con éxito");
+    }
 
 
     @GetMapping("/me")
