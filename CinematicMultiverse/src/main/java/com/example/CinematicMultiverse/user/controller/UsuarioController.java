@@ -33,7 +33,6 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class UsuarioController {
-    private final UsuarioService userService;
     private final UsuarioRepository usuarioRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -42,15 +41,15 @@ public class UsuarioController {
 
 
     @PostMapping("/auth/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody @Valid CreateUserRequest createUserRequest) {
-        Usuario usuario = usuarioService.createUser(createUserRequest);
+    public ResponseEntity<UserResponse> register(@RequestBody @Valid CreateUserRequest createUserRequest) {
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Usuario registrado exitosamente. Se ha enviado un correo de activación.");
-        response.put("email", usuario.getEmail());
+
+        Usuario usuario = usuarioService.createUser(createUserRequest);
+        UserResponse response = UserResponse.of(usuario);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
 
     @PostMapping("/auth/login")

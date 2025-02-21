@@ -45,7 +45,7 @@ public class UsuarioService {
                 .password(passwordEncoder.encode(createUserRequest.password()))
                 .email(createUserRequest.email())
                 .roles(Set.of(UserRole.USER))
-                .activationToken(generateRandomActivationCode()) // Genera un token de activación
+                .activationToken(generateRandomActivationCode())
                 .build();
 
         usuarioRepository.save(usuario);

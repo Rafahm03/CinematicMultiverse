@@ -9,7 +9,6 @@ import java.util.UUID;
 public record UserResponse(
         UUID id,
 
-        @UniqueUsername
         String username,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String token,

@@ -33,7 +33,7 @@ public class GlobalErrorController
                         ex.getMessage());
         result.setTitle("Entidad no encontrada");
         result.setType(URI.create("https://www.salesianos-triana.edu/errors/entity-not-found"));
-        result.setProperty("author", "Luismi");
+        result.setProperty("author", "Rafa");
 
         return result;
 
