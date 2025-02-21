@@ -11,9 +11,11 @@ import com.example.CinematicMultiverse.user.dto.UserResponse;
 import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
 import com.example.CinematicMultiverse.user.service.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,8 +40,9 @@ public class UsuarioController {
     private final RefreshTokenService refreshTokenService;
     private final UsuarioService usuarioService;
 
+
     @PostMapping("/auth/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody @Valid CreateUserRequest createUserRequest) {
         Usuario usuario = usuarioService.createUser(createUserRequest);
 
         Map<String, String> response = new HashMap<>();
@@ -104,6 +107,7 @@ public class UsuarioController {
         return UserResponse.of(usuario);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/me/admin")
     public Usuario adminMe(@AuthenticationPrincipal Usuario usuario) {
         return usuario;

@@ -6,22 +6,33 @@ import com.example.CinematicMultiverse.user.model.UserRole;
 import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
 import com.example.CinematicMultiverse.util.MailService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+
+    public List<Usuario> findAll(){
+        List<Usuario> result = usuarioRepository.findAll();
+        if(result.isEmpty())
+            throw new EntityNotFoundException("No hay usuarios con esos criterios de busqueda");
+        return result;
+    }
 
 
     @Value("${activation.duration}")

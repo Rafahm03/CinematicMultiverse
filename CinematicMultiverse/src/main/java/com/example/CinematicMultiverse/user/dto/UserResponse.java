@@ -1,12 +1,15 @@
 package com.example.CinematicMultiverse.user.dto;
 
 import com.example.CinematicMultiverse.user.model.Usuario;
+import com.example.CinematicMultiverse.user.validation.UniqueUsername;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.UUID;
 
 public record UserResponse(
         UUID id,
+
+        @UniqueUsername
         String username,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String token,
