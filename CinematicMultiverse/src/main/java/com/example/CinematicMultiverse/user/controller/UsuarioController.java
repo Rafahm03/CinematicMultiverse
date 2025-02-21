@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -37,12 +39,16 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping("/auth/register")
-    public ResponseEntity<UserResponse> register(@RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody CreateUserRequest createUserRequest) {
         Usuario usuario = usuarioService.createUser(createUserRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(UserResponse.of(usuario));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Usuario registrado exitosamente. Se ha enviado un correo de activación.");
+        response.put("email", usuario.getEmail());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
