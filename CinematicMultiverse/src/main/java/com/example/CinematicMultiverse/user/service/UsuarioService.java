@@ -5,16 +5,12 @@ import com.example.CinematicMultiverse.user.error.ActivationExpiredException;
 import com.example.CinematicMultiverse.user.model.UserRole;
 import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
-import com.example.CinematicMultiverse.util.ResendMailSender;
-import com.resend.core.exception.ResendException;
+import com.example.CinematicMultiverse.util.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
@@ -24,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
-    private final ResendMailSender resendMailSender;
+    private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -32,24 +28,23 @@ public class UsuarioService {
     private int activationDuration;
 
     public Usuario createUser(CreateUserRequest createUserRequest) {
+
         Usuario usuario = Usuario.builder()
                 .username(createUserRequest.username())
                 .password(passwordEncoder.encode(createUserRequest.password()))
                 .email(createUserRequest.email())
                 .roles(Set.of(UserRole.USER))
-                .activationToken(generateRandomActivationCode())
+                .activationToken(generateRandomActivationCode()) // Genera un token de activación
                 .build();
 
-        try {
-            String emailContent = "<p>Gracias por registrarte. Usa este código para activar tu cuenta: <strong>"
-                    + usuario.getActivationToken() + "</strong></p>";
+        usuarioRepository.save(usuario);
 
-            resendMailSender.sendMail(createUserRequest.email(), "Activación de cuenta", emailContent);
-        } catch (IOException | ResendException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al enviar el email de activación", e);
-        }
+        String emailContent = "<p>Gracias por registrarte. Usa este código para activar tu cuenta: <strong>"
+                + usuario.getActivationToken() + "</strong></p>";
 
-        return usuarioRepository.save(usuario);
+        mailService.sendMail(createUserRequest.email(), "Activación de cuenta", emailContent);
+
+        return usuario;
     }
 
 
