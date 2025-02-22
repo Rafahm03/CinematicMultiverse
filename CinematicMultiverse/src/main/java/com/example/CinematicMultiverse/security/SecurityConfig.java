@@ -68,7 +68,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/error").permitAll()
                 .requestMatchers("/activate/account/").permitAll()
                 .requestMatchers("/me/admin").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasRole("ADMIN")
+                .requestMatchers("/user/perfil").authenticated()
+                .requestMatchers("/user/**", "/user/admin/").hasRole("ADMIN")
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated());
 

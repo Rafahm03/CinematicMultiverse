@@ -1,5 +1,6 @@
 package com.example.CinematicMultiverse.user.controller;
 
+import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
 import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
 import com.example.CinematicMultiverse.user.model.Usuario;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -112,6 +114,49 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/perfil")
+    @Operation(summary = "Edita el perfil del usuario logueado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Perfil editado exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Usuario.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se encontró el usuario con el username proporcionado",
+                    content = @Content)
+    })
+    public ResponseEntity<Usuario> editarPerfil(@RequestBody EditUsuarioCmd editUsuarioCmd,
+                                                @AuthenticationPrincipal Usuario loggedUser) {
+        Usuario usuarioEditado = usuarioService.editarProfile(editUsuarioCmd, loggedUser);
+        return ResponseEntity.ok(usuarioEditado);
+    }
+
+    @PutMapping("/admin/{username}")
+    @Operation(summary = "Edita un usuario como admin")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Usuario editado exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Usuario.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se encontró el usuario con el username proporcionado",
+                    content = @Content),
+            @ApiResponse(responseCode = "403",
+                    description = "No tienes permisos para editar a otro usuario",
+                    content = @Content)
+    })
+    public ResponseEntity<Usuario> editarUsuarioPorAdmin(@RequestBody EditUsuarioCmd editUsuarioCmd,
+                                                         @PathVariable String username,
+                                                         Authentication authentication) {
+
+        if (authentication.getAuthorities().stream()
+                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
+        }
+
+        Usuario usuarioEditado = usuarioService.editarUsuarioPorAdmin(editUsuarioCmd, username);
+        return ResponseEntity.ok(usuarioEditado);
+    }
 
 }
 
