@@ -8,4 +8,5 @@ public class UsuarioNotFoundException extends RuntimeException {
     public UsuarioNotFoundException() {
         super("No hay usuarios con esos requisitos de búsqueda");
     }
+
 }

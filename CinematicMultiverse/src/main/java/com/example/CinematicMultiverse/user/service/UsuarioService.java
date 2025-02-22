@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -71,6 +72,14 @@ public class UsuarioService {
         if(result.isEmpty())
             throw new UsuarioNotFoundException("No hay usuarios con esos criterios de busqueda");
         return result;
+    }
+
+    public Usuario findByUsername(String username) {
+        Optional<Usuario> result = usuarioRepository.findByUsername(username);
+        if (result.isEmpty()) {
+            throw new UsuarioNotFoundException("No se encontraron usuarios con ese username");
+        }
+        return result.get();
     }
 
 

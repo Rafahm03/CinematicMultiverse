@@ -1,6 +1,9 @@
 package com.example.CinematicMultiverse.user.controller;
 
 import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
+import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
+import com.example.CinematicMultiverse.user.model.Usuario;
+import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
 import com.example.CinematicMultiverse.user.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,10 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +33,7 @@ import java.util.stream.Collectors;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final UsuarioRepository usuarioRepository;
 
     @Operation(summary = "Obtiene todas los usuario")
     @ApiResponses(value = {
@@ -61,7 +67,6 @@ public class UsuarioController {
 
     @GetMapping("/")
     public ResponseEntity<List<GetUsuarioDto>> getAll(Authentication authentication) {
-        // Verificamos si el usuario logueado tiene el rol de ADMIN
         if (authentication.getAuthorities().stream()
                 .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
@@ -73,4 +78,22 @@ public class UsuarioController {
 
         return ResponseEntity.ok(usuarios);
     }
+
+    @Operation(summary = "Obtiene un usuario por su nombre de usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado")
+    })
+    @GetMapping("/{username}")
+    public ResponseEntity<Usuario> getUsuarioByUsername(@PathVariable String username, Authentication authentication) {
+        if (authentication.getAuthorities().stream()
+                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
+        }
+
+        Usuario usuario = usuarioService.findByUsername(username);
+        return new ResponseEntity<>(usuario, HttpStatus.OK);
+    }
 }
+
