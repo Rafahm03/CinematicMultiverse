@@ -1,111 +1,76 @@
 package com.example.CinematicMultiverse.user.controller;
 
-import com.example.CinematicMultiverse.security.jwt.access.JwtService;
-import com.example.CinematicMultiverse.security.jwt.refresh.RefreshToken;
-import com.example.CinematicMultiverse.security.jwt.refresh.RefreshTokenRequest;
-import com.example.CinematicMultiverse.security.jwt.refresh.RefreshTokenService;
-import com.example.CinematicMultiverse.user.dto.ActivatedAccountRequest;
-import com.example.CinematicMultiverse.user.dto.CreateUserRequest;
-import com.example.CinematicMultiverse.user.dto.LoginRequest;
-import com.example.CinematicMultiverse.user.dto.UserResponse;
-import com.example.CinematicMultiverse.user.model.Usuario;
-import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
+import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
 import com.example.CinematicMultiverse.user.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor
+@Tag(name = "Usuario", description = "El controlador de usuario para gestionar todas las operaciones relacionadas con esta entidad")
 public class UsuarioController {
-    private final UsuarioService userService;
-    private final UsuarioRepository usuarioRepository;
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
+
     private final UsuarioService usuarioService;
 
-    @PostMapping("/auth/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody CreateUserRequest createUserRequest) {
-        Usuario usuario = usuarioService.createUser(createUserRequest);
+    @Operation(summary = "Obtiene todas los usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Se han encontrado las usuarios",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetUsuarioDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                                {
+                                                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                    "username": "RuizloCar",
+                                                    "password": "password123",
+                                                    "nombre": "Carlos Ruiz",
+                                                    "email": "carlos.ruiz@example.com",
+                                                    "enabled": true,
+                                                    "activationToken": null,
+                                                    "createdAt": "2025-02-22T00:00:00Z",
+                                                    "roles": [
+                                                        "USER"
+                                                    ]
+                                                }
+                                            """
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Usuario registrado exitosamente. Se ha enviado un correo de activación.");
-        response.put("email", usuario.getEmail());
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se han encontrado usuarios"
+            )
+    })
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-
-    @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(loginRequest.username());
-        if (usuarioOpt.isEmpty() || !usuarioOpt.get().isEnabled()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Cuenta no activada o usuario no encontrado");
+    @GetMapping("/")
+    public ResponseEntity<List<GetUsuarioDto>> getAll(Authentication authentication) {
+        // Verificamos si el usuario logueado tiene el rol de ADMIN
+        if (authentication.getAuthorities().stream()
+                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
         }
 
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                loginRequest.username(),
-                                loginRequest.password()
-                        )
-                );
+        List<GetUsuarioDto> usuarios = usuarioService.findAll().stream()
+                .map(GetUsuarioDto::of)
+                .collect(Collectors.toList());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        Usuario usuario = (Usuario) authentication.getPrincipal();
-
-        String accessToken = jwtService.generateAccessToken(usuario);
-
-        RefreshToken refreshToken = refreshTokenService.create(usuario);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(UserResponse.of(usuario, accessToken, refreshToken.getToken()));
-
-    }
-
-    @PostMapping("/auth/refresh/token")
-    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest req) {
-        String token = req.refreshToken();
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(refreshTokenService.refreshToken(token));
-
-    }
-
-    @PostMapping("/activate/account/")
-    public ResponseEntity<?> activateAccount(@RequestBody ActivatedAccountRequest req) {
-        String token = req.token();
-        Usuario usuarioActivado = usuarioService.activateAccount(token);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Cuenta activada con éxito");
-    }
-
-
-    @GetMapping("/me")
-    public UserResponse me(@AuthenticationPrincipal Usuario  usuario) {
-        return UserResponse.of(usuario);
-    }
-
-    @GetMapping("/me/admin")
-    public Usuario adminMe(@AuthenticationPrincipal Usuario usuario) {
-        return usuario;
+        return ResponseEntity.ok(usuarios);
     }
 }

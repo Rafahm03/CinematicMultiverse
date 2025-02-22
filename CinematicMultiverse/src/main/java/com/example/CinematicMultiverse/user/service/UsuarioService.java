@@ -2,6 +2,7 @@ package com.example.CinematicMultiverse.user.service;
 
 import com.example.CinematicMultiverse.user.dto.CreateUserRequest;
 import com.example.CinematicMultiverse.user.error.ActivationExpiredException;
+import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
 import com.example.CinematicMultiverse.user.model.UserRole;
 import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -63,4 +65,13 @@ public class UsuarioService {
                 })
                 .orElseThrow(() -> new ActivationExpiredException("El código de activación no existe o ha caducado"));
     }
+
+    public List<Usuario> findAll(){
+        List<Usuario> result = usuarioRepository.findAll();
+        if(result.isEmpty())
+            throw new UsuarioNotFoundException("No hay usuarios con esos criterios de busqueda");
+        return result;
+    }
+
+
 }
