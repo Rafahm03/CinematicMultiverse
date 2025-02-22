@@ -2,6 +2,7 @@ package com.example.CinematicMultiverse.user.service;
 
 import com.example.CinematicMultiverse.user.dto.CreateUserRequest;
 import com.example.CinematicMultiverse.user.error.ActivationExpiredException;
+import com.example.CinematicMultiverse.user.error.UnauthorizedActionException;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
 import com.example.CinematicMultiverse.user.model.UserRole;
 import com.example.CinematicMultiverse.user.model.Usuario;
@@ -80,6 +81,20 @@ public class UsuarioService {
             throw new UsuarioNotFoundException("No se encontraron usuarios con ese username");
         }
         return result.get();
+    }
+
+    public void deleteByUsername(String username) {
+        Optional<Usuario> result = usuarioRepository.findByUsername(username);
+        if (result.isEmpty()) {
+            throw new UsuarioNotFoundException("No se encontraron usuarios con ese username");
+        }
+        Usuario usuario = result.get();
+
+        if (usuario.getRoles().contains(UserRole.ADMIN)) {
+            throw new UnauthorizedActionException("No se puede eliminar un usuario con rol de Admin");
+        }
+        usuarioRepository.delete(usuario);
+
     }
 
 

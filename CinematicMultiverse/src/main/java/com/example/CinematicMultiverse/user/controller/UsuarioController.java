@@ -18,10 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,5 +92,26 @@ public class UsuarioController {
         Usuario usuario = usuarioService.findByUsername(username);
         return new ResponseEntity<>(usuario, HttpStatus.OK);
     }
+
+    @Operation(summary = "Elimina un usuario por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Usuario eliminado exitosamente",
+                    content = @Content),
+            @ApiResponse(responseCode = "404",
+                    description = "No se encontró el usuario con el ID proporcionado",
+                    content = @Content)
+    })
+    @DeleteMapping("/{username}")
+    public ResponseEntity<?> delete(@PathVariable String username, Authentication authentication) {
+        if (authentication.getAuthorities().stream()
+                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
+        }
+        usuarioService.deleteByUsername(username);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }
 
