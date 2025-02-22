@@ -1,6 +1,7 @@
 package com.example.CinematicMultiverse.user.service;
 
 import com.example.CinematicMultiverse.user.dto.CreateUserRequest;
+import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
 import com.example.CinematicMultiverse.user.error.ActivationExpiredException;
 import com.example.CinematicMultiverse.user.error.UnauthorizedActionException;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
@@ -97,5 +98,39 @@ public class UsuarioService {
 
     }
 
+    public Usuario editarProfile(EditUsuarioCmd editUsuarioCmd, Usuario loggedUser) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(loggedUser.getUsername());
+
+        if (optionalUsuario.isEmpty()) {
+            throw new UsuarioNotFoundException("No se encontraron usuarios con ese username");
+        }
+
+        Usuario usuario = optionalUsuario.get();
+        usuario.setUsername(editUsuarioCmd.username());
+        usuario.setNombre(editUsuarioCmd.nombre());
+        usuario.setEmail(editUsuarioCmd.email());
+
+        return usuarioRepository.save(usuario);
+    }
+
+
+    public Usuario editarUsuarioPorAdmin(EditUsuarioCmd editUsuarioCmd, String username) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
+
+        if (optionalUsuario.isEmpty()) {
+            throw new UsuarioNotFoundException("No se encontraron usuarios con ese username");
+        }
+
+        Usuario usuario = optionalUsuario.get();
+
+        usuario.setUsername(editUsuarioCmd.username());
+        usuario.setNombre(editUsuarioCmd.nombre());
+        usuario.setEmail(editUsuarioCmd.email());
+
+        UserRole newRole = UserRole.valueOf(editUsuarioCmd.role().toUpperCase());
+
+        usuario.addRole(newRole);
+        return usuarioRepository.save(usuario);
+    }
 
 }

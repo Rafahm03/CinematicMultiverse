@@ -27,7 +27,7 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NaturalId
+    //@NaturalId
     @Column(unique = true, updatable = false)
     private String username;
 
@@ -39,6 +39,14 @@ public class Usuario implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<UserRole> roles;
+
+    public void addRole(UserRole role) {
+        this.roles.add(role);
+    }
+
+    public void removeRole(UserRole role) {
+        this.roles.remove(role);
+    }
 
     @Builder.Default
     private boolean enabled = false;
