@@ -296,10 +296,14 @@ VALUES (1, 'ACCION'),           -- Vengadores: Endgame - Acción
        (1901, 'COMEDIA'),         -- Soul - Comedia
        (1951, 'FANTASIA'),        -- El Viaje de Chihiro - Fantasía
        (1951, 'CIENCIA_FICCION'), -- El Viaje de Chihiro - Ciencia ficción
+       (1951, 'ANIME'),
        (2001, 'CIENCIA_FICCION'), -- Akira - Ciencia ficción
        (2001, 'ACCION'),          -- Akira - Acción
+       (2001, 'ANIME'),                   -- Akira - anime
        (2051, 'FANTASIA'),        -- Your Name - Fantasía
        (2051, 'ROMANCE'),         -- Your Name - Romance
+       (2051, 'ANIME'),
        (2101, 'CIENCIA_FICCION'), -- Evangelion: 3.0+1.0 Thrice Upon a Time - Ciencia ficción
        (2101, 'FANTASIA'),        -- Evangelion: 3.0+1.0 Thrice Upon a Time - Fantasía
-       (2101, 'ACCION');          -- Evangelion: 3.0+1.0 Thrice Upon a Time - Acción
+       (2101, 'ACCION'),          -- Evangelion: 3.0+1.0 Thrice Upon a Time - Acción
+       (2101, 'ANIME');
