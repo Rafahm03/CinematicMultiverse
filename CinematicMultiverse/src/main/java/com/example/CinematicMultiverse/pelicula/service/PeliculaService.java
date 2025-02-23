@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,16 @@ import java.util.stream.Collectors;
 public class PeliculaService {
 
     private final PeliculaRepository peliculaRepository;
+
+    @Transactional
+    public GetPeliculaDto getPeliculaDtoById(Long id) {
+        Pelicula pelicula = peliculaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pelicula no encontrada"));
+        Set<String> generos = pelicula.getGeneros().stream().map(Enum::name).collect(Collectors.toSet());
+        return new GetPeliculaDto(pelicula.getId(), pelicula.getTitulo(), pelicula.getSinopsis(),
+                pelicula.getPuntuacion(), pelicula.getImagen(), pelicula.getDuracion(),
+                pelicula.getAnio(), generos);
+    }
+
 
 
     @Transactional
@@ -34,6 +45,7 @@ public class PeliculaService {
         }
         return result2;
     }
+
 
 
     public Pelicula save(EditPeliculaCmd editPeliculaCmd) {
