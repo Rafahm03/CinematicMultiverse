@@ -99,4 +99,22 @@ public class PeliculaController {
 
         return ResponseEntity.ok(peliculas);
     }
+
+    @Operation(summary = "Obtiene una película por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Se ha encontrado la película",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = GetPeliculaDto.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado la película con el ID proporcionado",
+                    content = @Content)
+    })
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}")
+    public GetPeliculaDto getById(@PathVariable Long id) {
+        return peliculaService.getPeliculaDtoById(id);
+    }
+
 }
