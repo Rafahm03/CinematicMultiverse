@@ -1,17 +1,26 @@
 package com.example.CinematicMultiverse.pelicula.controller;
 
 import com.example.CinematicMultiverse.pelicula.dto.EditPeliculaCmd;
+import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.service.PeliculaService;
+import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pelicula")
@@ -21,10 +30,73 @@ public class PeliculaController {
     private final PeliculaService peliculaService;
 
 
+
+    @Operation(summary = "Guarda una nueva película")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Película creada con éxito",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = GetPeliculaDto.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Datos inválidos para crear la película",
+                    content = @Content)
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/guardar")
-    public ResponseEntity<Pelicula> guardarPelicula(@RequestBody EditPeliculaCmd editPeliculaCmd) {
+    public ResponseEntity<GetPeliculaDto> guardarPelicula(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Detalles de la película a guardar",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EditPeliculaCmd.class),
+                            examples = @ExampleObject(value = """
+                                {
+                                    "titulo": "The Incredible Hulk",
+                                    "sinopsis": "Bruce Banner busca una cura para su condición mientras es perseguido por el ejército de los EE.UU.",
+                                    "puntuacion": 7.0,
+                                    "imagen": "https://example.com/the-incredible-hulk.jpg",
+                                    "duracion": 112,
+                                    "anio": 2008,
+                                    "genero": "ACCION"
+                                }
+                        """)))
+            @RequestBody EditPeliculaCmd editPeliculaCmd) {
+
         Pelicula nuevaPelicula = peliculaService.save(editPeliculaCmd);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPelicula);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(GetPeliculaDto.of(nuevaPelicula));
+    }
+
+
+
+    @Operation(summary = "Obtiene todas las películas")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Se han encontrado películas",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetPeliculaDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            [
+                                                {"titulo": "incidencia1"}
+                                            ]
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se han encontrado películas",
+                    content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/")
+    public ResponseEntity<List<GetPeliculaDto>> getAllPeliculas() {
+        List<GetPeliculaDto> peliculas = peliculaService.findAll();
+
+        if (peliculas.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(peliculas);
     }
 }
