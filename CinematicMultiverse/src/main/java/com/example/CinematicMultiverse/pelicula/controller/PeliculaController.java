@@ -4,7 +4,9 @@ import com.example.CinematicMultiverse.pelicula.dto.EditPeliculaCmd;
 import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.service.PeliculaService;
+import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
 import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
+import com.example.CinematicMultiverse.user.model.Usuario;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,7 +18,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -116,5 +120,30 @@ public class PeliculaController {
     public GetPeliculaDto getById(@PathVariable Long id) {
         return peliculaService.getPeliculaDtoById(id);
     }
+
+
+    @Operation(summary = "Edita una película como admin")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Película editada exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Pelicula.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se encontró la Película con el id proporcionado",
+                    content = @Content),
+            @ApiResponse(responseCode = "403",
+                    description = "No tienes permisos para editar",
+                    content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<Pelicula> editPelicula(@RequestBody EditPeliculaCmd editPeliculaCmd,
+                                                 @PathVariable Long id
+    ) {
+
+        Pelicula peliculaEditada = peliculaService.editPelicula(editPeliculaCmd, id);
+        return ResponseEntity.ok(peliculaEditada);
+    }
+
 
 }

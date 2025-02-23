@@ -6,14 +6,15 @@ import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
 import com.example.CinematicMultiverse.pelicula.model.Genero;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.repo.PeliculaRepository;
+import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
+import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
+import com.example.CinematicMultiverse.user.model.UserRole;
+import com.example.CinematicMultiverse.user.model.Usuario;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,13 +50,12 @@ public class PeliculaService {
 
 
     public Pelicula save(EditPeliculaCmd editPeliculaCmd) {
-        Set<Genero> generos = Arrays.stream(editPeliculaCmd.genero().split(","))
-                .map(String::trim)
+        Set<Genero> generos = editPeliculaCmd.generos().stream()
                 .map(String::toUpperCase)
                 .map(Genero::valueOf)
                 .collect(Collectors.toSet());
 
-        return peliculaRepository.save(Pelicula.builder()
+        Pelicula pelicula = Pelicula.builder()
                 .titulo(editPeliculaCmd.titulo())
                 .sinopsis(editPeliculaCmd.sinopsis())
                 .puntuacion(editPeliculaCmd.puntuacion())
@@ -63,7 +63,41 @@ public class PeliculaService {
                 .duracion(editPeliculaCmd.duracion())
                 .anio(editPeliculaCmd.anio())
                 .generos(generos)
-                .build());
+                .build();
+
+        return peliculaRepository.save(pelicula);
     }
+
+
+
+    @Transactional
+    public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, Long id) {
+        Optional<Pelicula> optionalPelicula = peliculaRepository.findById(id);
+
+        if (optionalPelicula.isEmpty()) {
+            throw new PeliculaNotFoundException("No se encontraron películas con ese id");
+        }
+
+        Pelicula pelicula = optionalPelicula.get();
+
+        pelicula.setTitulo(editPeliculaCmd.titulo());
+        pelicula.setDuracion(editPeliculaCmd.duracion());
+        pelicula.setAnio(editPeliculaCmd.anio());
+        pelicula.setImagen(editPeliculaCmd.imagen());
+        pelicula.setSinopsis(editPeliculaCmd.sinopsis());
+        pelicula.setPuntuacion(editPeliculaCmd.puntuacion());
+
+        if (editPeliculaCmd.generos() != null && !editPeliculaCmd.generos().isEmpty()) {
+            Set<Genero> generos = new HashSet<>();
+            for (String generoStr : editPeliculaCmd.generos()) {
+                Genero genero = Genero.valueOf(generoStr.toUpperCase());
+                generos.add(genero);
+            }
+            pelicula.setGeneros(generos);
+        }
+
+        return peliculaRepository.save(pelicula);
+    }
+
 
 }
