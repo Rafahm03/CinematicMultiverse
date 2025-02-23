@@ -145,5 +145,21 @@ public class PeliculaController {
         return ResponseEntity.ok(peliculaEditada);
     }
 
+    @Operation(summary = "Elimina una película por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Película eliminada exitosamente",
+                    content = @Content),
+            @ApiResponse(responseCode = "404",
+                    description = "No se encontró la pelícuña con el ID proporcionado",
+                    content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        peliculaService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }
