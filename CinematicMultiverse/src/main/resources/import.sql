@@ -312,3 +312,18 @@ VALUES (1, 'ACCION'),           -- Vengadores: Endgame - Acción
        (2101, 'FANTASIA'),        -- Evangelion: 3.0+1.0 Thrice Upon a Time - Fantasía
        (2101, 'ACCION'),          -- Evangelion: 3.0+1.0 Thrice Upon a Time - Acción
        (2101, 'ANIME');
+
+INSERT INTO resenia (id, pelicula_id, usuario_id, comentario, fecha_publicacion, puntuacion)
+VALUES
+    (51, 1,  (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'Una película increíble, la mejor de la saga. Los Vengadores luchando por el destino del universo, con efectos impresionantes y personajes icónicos. ¡Un espectáculo!', '2024-01-15', 9),  -- Vengadores: Endgame
+    (101, 51,  (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'El Padrino es una obra maestra del cine. La trama, los personajes y la dirección son de otro nivel. Sin duda, un clásico que siempre será recordado.', '2024-01-20', 10),  -- El Padrino
+    (151, 101,  (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'Un thriller excelente, con una historia sólida y giros sorprendentes. La actuación de Heath Ledger como el Joker es sublime.', '2024-02-05', 9),  -- El Caballero Oscuro
+    (201, 151,  (SELECT id FROM user_entity WHERE username = 'user'), 'Pulp Fiction tiene una narrativa única y personajes memorables. Aunque no es para todos, su estilo es irrepetible.', '2024-02-10', 8),  -- Pulp Fiction
+    (251, 201,  (SELECT id FROM user_entity WHERE username = 'user'), 'Una historia conmovedora, llena de emoción y con una actuación estelar de Tom Hanks. Forrest Gump es un clásico que te hace reflexionar sobre la vida.', '2024-02-12', 10),  -- Forrest Gump
+    (301, 251,  (SELECT id FROM user_entity WHERE username = 'user'), 'Matrix cambió la ciencia ficción para siempre. La acción es brutal y la filosofía detrás de la trama es profunda. Definitivamente una película para ver más de una vez.', '2024-02-15', 9),  -- Matrix
+    (351, 301,  (SELECT id FROM user_entity WHERE username = 'ElAdmin'), 'Interstellar es una obra visualmente impresionante, aunque la trama a veces se vuelve confusa. A pesar de eso, es una experiencia que te deja pensando.', '2024-02-18', 8),  -- Interestelar
+    (401, 351,  (SELECT id FROM user_entity WHERE username = 'ElAdmin'), 'Gladiador es una mezcla perfecta de acción y drama. Las escenas de combate son épicas y la historia de venganza te atrapa desde el principio.', '2024-02-20', 9),  -- Gladiador
+    (451, 401,  (SELECT id FROM user_entity WHERE username = 'CarlosGomez92'), 'Titanic es una película que combina romance y tragedia de manera impecable. A pesar de ser una historia conocida, siempre conmueve.', '2024-02-22', 8),  -- Titanic
+    (501, 451,  (SELECT id FROM user_entity WHERE username = 'LauraMartinez'), 'El Señor de los Anillos: El Retorno del Rey es el cierre perfecto para una saga épica. Con batallas impresionantes y personajes que has llegado a querer, es una obra maestra de la fantasía.', '2024-02-25', 10),  -- El Señor de los Anillos: El Retorno del Rey
+    (551, 501,  (SELECT id FROM user_entity WHERE username = 'AndresLopez'), 'Una trama que te hace cuestionar la realidad, muy bien hecha.', '2024-03-25', 9),
+    (601, 551,  (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'Un thriller psicológico increíble, con una actuación sobresaliente.', '2024-03-28', 9);

@@ -1,5 +1,8 @@
 package com.example.CinematicMultiverse.user.controller;
 
+import com.example.CinematicMultiverse.resenhia.dto.CreateReseniaRequest;
+import com.example.CinematicMultiverse.resenhia.model.Resenia;
+import com.example.CinematicMultiverse.resenhia.service.ReseniaService;
 import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
 import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
@@ -20,9 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,6 +38,7 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final UsuarioRepository usuarioRepository;
+    private final ReseniaService reseniaService;
 
     @Operation(summary = "Obtiene todas los usuario")
     @ApiResponses(value = {
