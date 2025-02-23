@@ -2,6 +2,10 @@ INSERT INTO user_entity (id, username, password, nombre, email, enabled, activat
 VALUES (gen_random_uuid(), 'SoyAdmin', '{noop}admin', 'admin', 'admin@admin', true, NULL, NOW());
 
 INSERT INTO user_entity (id, username, password, nombre, email, enabled, activation_token, created_at)
+VALUES (gen_random_uuid(), 'user', '{noop}1', 'user', 'user@user', true, NULL, NOW());
+
+
+INSERT INTO user_entity (id, username, password, nombre, email, enabled, activation_token, created_at)
 VALUES (gen_random_uuid(), 'ElAdmin', '{noop}1234', 'admin', 'admin1@admin', true, NULL, NOW());
 
 INSERT INTO user_entity (id, username, password, nombre, email, enabled, activation_token, created_at)
@@ -66,6 +70,7 @@ VALUES (gen_random_uuid(), 'EstherCano', '{noop}estherPass', 'Esther Cano', 'est
 
 
 INSERT INTO usuario_roles (usuario_id, roles) SELECT id, 0 FROM user_entity WHERE username = 'SoyAdmin';
+INSERT INTO usuario_roles (usuario_id, roles) SELECT id, 1 FROM user_entity WHERE username = 'user';
 INSERT INTO usuario_roles (usuario_id, roles) SELECT id, 0 FROM user_entity WHERE username = 'ElAdmin';
 INSERT INTO usuario_roles (usuario_id, roles) SELECT id, 1 FROM user_entity WHERE username = 'CarlosGomez92';
 INSERT INTO usuario_roles (usuario_id, roles) SELECT id, 1 FROM user_entity WHERE username = 'LauraMartinez';
