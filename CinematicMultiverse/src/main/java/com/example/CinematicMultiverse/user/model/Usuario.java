@@ -1,5 +1,6 @@
 package com.example.CinematicMultiverse.user.model;
 
+import com.example.CinematicMultiverse.resenhia.model.Resenia;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
@@ -9,10 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -46,6 +44,24 @@ public class Usuario implements UserDetails {
 
     public void removeRole(UserRole role) {
         this.roles.remove(role);
+    }
+
+    @OneToMany(mappedBy = "usuario",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    @ToString.Exclude
+    private List<Resenia> resenias = new ArrayList<>();
+
+    public void addResenia(Resenia resenia) {
+        resenia.setUsuario(this);
+        this.resenias.add(resenia);
+    }
+
+    public void removeResenia(Resenia resenia) {
+        resenias.remove(resenia);
     }
 
     @Builder.Default

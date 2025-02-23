@@ -1,9 +1,12 @@
 package com.example.CinematicMultiverse.pelicula.model;
 
 
+import com.example.CinematicMultiverse.resenhia.model.Resenia;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,6 +33,24 @@ public class Pelicula {
     private int duracion;
 
     private int anio;
+
+    @OneToMany(mappedBy = "pelicula",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    @ToString.Exclude
+    private List<Resenia> resenias = new ArrayList<>();
+
+    public void addResenia(Resenia resenia) {
+        resenia.setPelicula(this);
+        this.resenias.add(resenia);
+    }
+
+    public void removeResenia(Resenia resenia) {
+        resenias.remove(resenia);
+    }
 
     @ElementCollection(targetClass = Genero.class)
     @Enumerated(EnumType.STRING)
