@@ -99,5 +99,15 @@ public class PeliculaService {
         return peliculaRepository.save(pelicula);
     }
 
+    public void deleteById(Long id) {
+        Optional<Pelicula> peliculaOptional = peliculaRepository.findById(id);
+
+        if (peliculaOptional.isEmpty()) {
+            throw new UsuarioNotFoundException("Pelicula no encontrada");
+        }
+
+        peliculaRepository.deleteById(id);
+    }
+
 
 }
