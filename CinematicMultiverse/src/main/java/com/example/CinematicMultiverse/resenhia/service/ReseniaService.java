@@ -111,6 +111,19 @@ public class ReseniaService {
         return reseniaRepository.save(resenia);
     }
 
+    @Transactional
+    public void eliminarResenia(UUID id, String username) {
+        Resenia resenia = reseniaRepository.findById(id)
+                .orElseThrow(() -> new ReseniaNotFoundException("Reseña no encontrada"));
+
+        if (!resenia.getUsuario().getUsername().equals(username)) {
+            throw new UnauthorizedAccessException("No tienes permiso para eliminar esta reseña");
+        }
+
+        reseniaRepository.delete(resenia);
+    }
+
+
 
 
 
