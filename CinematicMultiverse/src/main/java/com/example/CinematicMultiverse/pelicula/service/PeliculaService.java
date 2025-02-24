@@ -6,17 +6,22 @@ import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
 import com.example.CinematicMultiverse.pelicula.model.Genero;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.repo.PeliculaRepository;
+import com.example.CinematicMultiverse.query.PeliculaSpecificationBuilder;
 import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
 import com.example.CinematicMultiverse.user.model.UserRole;
 import com.example.CinematicMultiverse.user.model.Usuario;
+import com.example.CinematicMultiverse.util.SearchCriteria;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log
 @Service
 @RequiredArgsConstructor
 public class PeliculaService {
@@ -24,30 +29,33 @@ public class PeliculaService {
     private final PeliculaRepository peliculaRepository;
 
     @Transactional
-    public GetPeliculaDto getPeliculaDtoById(Long id) {
-        Pelicula pelicula = peliculaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pelicula no encontrada"));
-        Set<String> generos = pelicula.getGeneros().stream().map(Enum::name).collect(Collectors.toSet());
-        return new GetPeliculaDto(pelicula.getId(), pelicula.getTitulo(), pelicula.getSinopsis(),
+    public GetPeliculaDto getPeliculaDtoByTitulo(String titulo) {
+        Pelicula pelicula = peliculaRepository.findByTitulo(titulo)
+                .orElseThrow(() -> new RuntimeException("Película no encontrada"));
+
+        Set<String> generos = pelicula.getGeneros().stream()
+                .map(Enum::name)
+                .collect(Collectors.toSet());
+
+        return new GetPeliculaDto(
+                pelicula.getId(), pelicula.getTitulo(), pelicula.getSinopsis(),
                 pelicula.getPuntuacion(), pelicula.getImagen(), pelicula.getDuracion(),
-                pelicula.getAnio(), generos);
+                pelicula.getAnio(), generos
+        );
     }
-
-
 
     @Transactional
-    public List<GetPeliculaDto  > findAll(){
-
+    public List<GetPeliculaDto> findAll() {
         List<Pelicula> result = peliculaRepository.findAll();
 
-        List<GetPeliculaDto> result2 = result.stream().map(GetPeliculaDto::of).toList();
-
-        if (result2.isEmpty()){
+        if (result.isEmpty()) {
             throw new PeliculaNotFoundException("No existen películas");
         }
-        return result2;
+
+        return result.stream()
+                .map(GetPeliculaDto::of)
+                .toList();
     }
-
-
 
     public Pelicula save(EditPeliculaCmd editPeliculaCmd) {
         Set<Genero> generos = editPeliculaCmd.generos().stream()
@@ -68,17 +76,10 @@ public class PeliculaService {
         return peliculaRepository.save(pelicula);
     }
 
-
-
     @Transactional
-    public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, Long id) {
-        Optional<Pelicula> optionalPelicula = peliculaRepository.findById(id);
-
-        if (optionalPelicula.isEmpty()) {
-            throw new PeliculaNotFoundException("No se encontraron películas con ese id");
-        }
-
-        Pelicula pelicula = optionalPelicula.get();
+    public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, String titulo) {
+        Pelicula pelicula = peliculaRepository.findByTitulo(titulo)
+                .orElseThrow(() -> new PeliculaNotFoundException("No se encontraron películas con ese título"));
 
         pelicula.setTitulo(editPeliculaCmd.titulo());
         pelicula.setDuracion(editPeliculaCmd.duracion());
@@ -99,15 +100,30 @@ public class PeliculaService {
         return peliculaRepository.save(pelicula);
     }
 
-    public void deleteById(Long id) {
-        Optional<Pelicula> peliculaOptional = peliculaRepository.findById(id);
+    public void deleteByTitulo(String titulo) {
+        Pelicula pelicula = peliculaRepository.findByTitulo(titulo)
+                .orElseThrow(() -> new PeliculaNotFoundException("Película no encontrada"));
 
-        if (peliculaOptional.isEmpty()) {
-            throw new UsuarioNotFoundException("Pelicula no encontrada");
-        }
-
-        peliculaRepository.deleteById(id);
+        peliculaRepository.delete(pelicula);
     }
 
+    @Transactional
+    public List<GetPeliculaDto> search(List<SearchCriteria> searchCriteriaList) {
+        PeliculaSpecificationBuilder peliculaSpecificationBuilder = new PeliculaSpecificationBuilder(searchCriteriaList);
+        Specification<Pelicula> where = peliculaSpecificationBuilder.build();
+
+        List<Pelicula> peliculas = peliculaRepository.findAll(where);
+
+        log.info("Cantidad de películas encontradas: " + peliculas.size());
+
+        for (Pelicula p : peliculas) {
+            log.info("Película encontrada -> Título: " + p.getTitulo() + ", Año: " + p.getAnio() + ", Puntuación: " + p.getPuntuacion());
+        }
+
+        return peliculas.stream()
+                .map(GetPeliculaDto::of)
+                .toList();
+    }
 
 }
+

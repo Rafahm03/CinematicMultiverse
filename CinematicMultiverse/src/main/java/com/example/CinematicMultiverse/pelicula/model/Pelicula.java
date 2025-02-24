@@ -4,10 +4,12 @@ package com.example.CinematicMultiverse.pelicula.model;
 import com.example.CinematicMultiverse.resenhia.model.Resenia;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -17,9 +19,10 @@ import java.util.Set;
 @Builder
 public class Pelicula {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
+    @NaturalId
     @Column(nullable = false)
     private String titulo;
 

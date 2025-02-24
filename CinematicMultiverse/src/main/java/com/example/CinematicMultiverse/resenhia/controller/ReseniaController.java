@@ -32,7 +32,7 @@ public class ReseniaController {
                                                       @AuthenticationPrincipal UserDetails userDetails) {
         try {
             String username = userDetails.getUsername();
-            Long peliculaId = createReseniaRequest.peliculaId();
+            UUID peliculaId = createReseniaRequest.peliculaId();
 
             Resenia resenia = reseniaService.crearReview(username, createReseniaRequest, peliculaId);
 

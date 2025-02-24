@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 @Builder
 public class Resenia {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -27,7 +28,7 @@ public class Resenia {
     private Pelicula pelicula;
 
     @Column(nullable = false)
-    private int puntuacion;
+    private double puntuacion;
 
     @Column(columnDefinition = "TEXT")
     private String comentario;

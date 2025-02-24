@@ -47,7 +47,7 @@ public class ReseniaService {
 
 
     @Transactional
-    public Resenia crearReview(String username, CreateReseniaRequest createReseniaRequest, Long peliculaId) {
+    public Resenia crearReview(String username, CreateReseniaRequest createReseniaRequest, UUID peliculaId) {
 
         Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
         Optional<Pelicula> optionalPelicula = peliculaRepository.findById(peliculaId);
