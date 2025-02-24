@@ -173,13 +173,13 @@ public class PeliculaController {
         log.info(search);
 
         List<SearchCriteria> params = new ArrayList<>();
-        if (search != null && !search.trim().isEmpty()) {  // Aseguramos que search no esté vacío
+        if (search != null && !search.trim().isEmpty()) {
             Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
             Matcher matcher = pattern.matcher(search + ",");
             while (matcher.find()) {
-                log.info(matcher.group(1)); // key
-                log.info(matcher.group(2)); // operation
-                log.info(matcher.group(3)); // value
+                log.info(matcher.group(1));
+                log.info(matcher.group(2));
+                log.info(matcher.group(3));
                 params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
             }
         }

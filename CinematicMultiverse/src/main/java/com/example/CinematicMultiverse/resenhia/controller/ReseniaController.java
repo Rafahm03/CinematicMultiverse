@@ -5,6 +5,7 @@ import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.resenhia.dto.CreateReseniaRequest;
 import com.example.CinematicMultiverse.resenhia.dto.GetReseniaDto;
+import com.example.CinematicMultiverse.resenhia.error.ReseniaNotFoundException;
 import com.example.CinematicMultiverse.resenhia.error.ReseniaYaExiste;
 import com.example.CinematicMultiverse.resenhia.model.Resenia;
 import com.example.CinematicMultiverse.resenhia.service.ReseniaService;
@@ -84,6 +85,20 @@ public class ReseniaController {
 
         return ResponseEntity.ok(reviews);
     }
+
+
+    @GetMapping("/buscarReviews")
+    public ResponseEntity<List<GetReseniaDto>> buscarReviews(@RequestParam(value = "tituloPelicula") String tituloPelicula) {
+        List<GetReseniaDto> reviews = reseniaService.findReviewsByTitulo(tituloPelicula);
+
+        if (reviews.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(reviews);
+    }
+
+
 
 
 
