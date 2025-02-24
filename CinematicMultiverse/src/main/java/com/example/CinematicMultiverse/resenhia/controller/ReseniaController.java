@@ -111,6 +111,15 @@ public class ReseniaController {
         return ResponseEntity.ok(reseniaDto);
     }
 
+    @DeleteMapping("/eliminarReview/{id}")
+    public ResponseEntity<Void> eliminarResenia(@PathVariable UUID id,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+
+        reseniaService.eliminarResenia(id, username);
+
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
