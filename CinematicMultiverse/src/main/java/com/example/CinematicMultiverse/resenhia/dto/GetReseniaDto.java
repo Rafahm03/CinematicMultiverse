@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record GetReseniaDto(
-        Long id,
+        UUID id,
         UUID usuarioId,
         UUID peliculaId,
         int puntuacion,

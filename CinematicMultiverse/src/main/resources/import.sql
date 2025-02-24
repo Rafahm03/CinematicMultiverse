@@ -101,9 +101,6 @@ VALUES (gen_random_uuid(), 'Vengadores: EndGame',
        (gen_random_uuid(), 'El Padrino',
         'La historia de la familia Corleone, una de las más poderosas en el mundo de la mafia.', 9.2,
         'https://pics.filmaffinity.com/El_Padrino-100849256-large.jpg', 175, 1972),
-       (gen_random_uuid(), 'El caballero oscuro',
-        'Batman enfrenta a su mayor enemigo, el Joker, quien sume a Gotham en el caos.', 9.0,
-        'https://pics.filmaffinity.com/El_Caballero_Oscuro-123456789-large.jpg', 152, 2008),
        (gen_random_uuid(), 'Pulp Fiction',
         'Varias historias entrelazadas de crimen, venganza y redención en Los Ángeles.', 8.9,
         'https://pics.filmaffinity.com/Pulp_Fiction-132456789-large.jpg', 154, 1994),
@@ -213,7 +210,189 @@ VALUES (gen_random_uuid(), 'Vengadores: EndGame',
         'https://pics.filmaffinity.com/Evangelion_Thrice_Upon_A_Time-123456789-large.jpg', 155, 2021);
 
 
+
 INSERT INTO pelicula_genero (pelicula_id, genero)
-VALUES   ((SELECT id FROM pelicula WHERE titulo = 'Vengadores: EndGame'), 'ACCION'),
-           ((SELECT id FROM pelicula WHERE titulo = 'Vengadores: EndGame'), 'FANTASIA'),
-           ((SELECT id FROM pelicula WHERE titulo = 'Vengadores: EndGame'), 'CIENCIA_FICCION');
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Vengadores: EndGame'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Vengadores: EndGame'
+UNION ALL
+SELECT id, 'FANTASIA' FROM pelicula WHERE titulo = 'Vengadores: EndGame'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'El Padrino'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Padrino'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'Pulp Fiction'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Pulp Fiction'
+UNION ALL
+SELECT id, 'ROMANCE' FROM pelicula WHERE titulo = 'Forrest Gump'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Forrest Gump'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Matrix'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Matrix'
+UNION ALL
+SELECT id, 'AVENTURA' FROM pelicula WHERE titulo = 'Interestelar'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Interestelar'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Interestelar'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Gladiador'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Gladiador'
+UNION ALL
+SELECT id, 'ROMANCE' FROM pelicula WHERE titulo = 'Titanic'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Titanic'
+UNION ALL
+SELECT id, 'FANTASIA' FROM pelicula WHERE titulo = 'El Señor de los Anillos: El Retorno del Rey'
+UNION ALL
+SELECT id, 'AVENTURA' FROM pelicula WHERE titulo = 'El Señor de los Anillos: El Retorno del Rey'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Inception'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Inception'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'El Silencio de los Inocentes'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Silencio de los Inocentes'
+UNION ALL
+SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'Los Increíbles'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Los Increíbles'
+UNION ALL
+SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'Toy Story'
+UNION ALL
+SELECT id, 'AVENTURA' FROM pelicula WHERE titulo = 'Toy Story'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Spider-Man: No Way Home'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Spider-Man: No Way Home'
+UNION ALL
+SELECT id, 'AVENTURA' FROM pelicula WHERE titulo = 'Avatar'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Avatar'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Deadpool'
+UNION ALL
+SELECT id, 'COMEDIA' FROM pelicula WHERE titulo = 'Deadpool'
+UNION ALL
+SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'Coco'
+UNION ALL
+SELECT id, 'FANTASIA' FROM pelicula WHERE titulo = 'Coco'
+UNION ALL
+SELECT id, 'ROMANCE' FROM pelicula WHERE titulo = 'La La Land'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'La La Land'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'Joker'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Joker'
+UNION ALL
+SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'Shrek'
+UNION ALL
+SELECT id, 'COMEDIA' FROM pelicula WHERE titulo = 'Shrek'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Mad Max: Fury Road'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Mad Max: Fury Road'
+UNION ALL
+SELECT id, 'TERROR' FROM pelicula WHERE titulo = 'El Exorcista'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Exorcista'
+UNION ALL
+SELECT id, 'AVENTURA' FROM pelicula WHERE titulo = 'Jurassic Park'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Jurassic Park'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'Django Unchained'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Django Unchained'
+UNION ALL
+SELECT id, 'COMEDIA' FROM pelicula WHERE titulo = 'El Gran Hotel Budapest'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Whiplash'
+UNION ALL
+SELECT id, 'COMEDIA' FROM pelicula WHERE titulo = 'Whiplash'
+UNION ALL
+SELECT id, 'COMEDIA' FROM pelicula WHERE titulo = 'El Lobo de Wall Street'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Lobo de Wall Street'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Parasite'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'Parasite'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Irlandés'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'El Irlandés'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Blade Runner 2049'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Blade Runner 2049'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Guardianes de la Galaxia'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Guardianes de la Galaxia'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Logan'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Logan'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'John Wick'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'John Wick'
+UNION ALL
+SELECT id, 'TERROR' FROM pelicula WHERE titulo = 'It (Eso)'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'It (Eso)'
+UNION ALL
+SELECT id, 'TERROR' FROM pelicula WHERE titulo = 'El Conjuro'
+UNION ALL
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Conjuro'
+UNION ALL
+SELECT id, 'TERROR' FROM pelicula WHERE titulo = 'Hereditary'
+UNION ALL
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'Hereditary'
+UNION ALL
+SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'Inside Out'
+UNION ALL
+SELECT id, 'COMEDIA' FROM pelicula WHERE titulo = 'Inside Out'
+UNION ALL
+SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'Soul'
+UNION ALL
+SELECT id, 'COMEDIA' FROM pelicula WHERE titulo = 'Soul'
+UNION ALL
+SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'El Viaje de Chihiro'
+UNION ALL
+SELECT id, 'FANTASIA' FROM pelicula WHERE titulo = 'El Viaje de Chihiro'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Akira'
+UNION ALL
+SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Akira'
+UNION ALL
+SELECT id, 'ROMANCE' FROM pelicula WHERE titulo = 'Your Name'
+UNION ALL
+SELECT id, 'FANTASIA' FROM pelicula WHERE titulo = 'Your Name'
+UNION ALL
+SELECT id, 'ANIME' FROM pelicula WHERE titulo = 'Evangelion: 3.0+1.0 Thrice Upon a Time'
+UNION ALL
+SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Evangelion: 3.0+1.0 Thrice Upon a Time';
+
+
+INSERT INTO resenia (id, pelicula_id, usuario_id, comentario, fecha_publicacion, puntuacion)
+VALUES
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Vengadores: EndGame'), (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'Una película increíble, la mejor de la saga. Los Vengadores luchando por el destino del universo, con efectos impresionantes y personajes icónicos. ¡Un espectáculo!', '2024-01-15', 9),  -- Vengadores: Endgame
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'El Padrino'), (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'El Padrino es una obra maestra del cine. La trama, los personajes y la dirección son de otro nivel. Sin duda, un clásico que siempre será recordado.', '2024-01-20', 10),  -- El Padrino
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Pulp Fiction'),  (SELECT id FROM user_entity WHERE username = 'user'), 'Pulp Fiction tiene una narrativa única y personajes memorables. Aunque no es para todos, su estilo es irrepetible.', '2024-02-10', 8),  -- Pulp Fiction
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Forrest Gump'),  (SELECT id FROM user_entity WHERE username = 'user'), 'Una historia conmovedora, llena de emoción y con una actuación estelar de Tom Hanks. Forrest Gump es un clásico que te hace reflexionar sobre la vida.', '2024-02-12', 10),  -- Forrest Gump
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Matrix'), (SELECT id FROM user_entity WHERE username = 'user'), 'Matrix cambió la ciencia ficción para siempre. La acción es brutal y la filosofía detrás de la trama es profunda. Definitivamente una película para ver más de una vez.', '2024-02-15', 9),  -- Matrix
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Interestelar'),  (SELECT id FROM user_entity WHERE username = 'ElAdmin'), 'Interstellar es una obra visualmente impresionante, aunque la trama a veces se vuelve confusa. A pesar de eso, es una experiencia que te deja pensando.', '2024-02-18', 8),  -- Interestelar
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Gladiador'), (SELECT id FROM user_entity WHERE username = 'ElAdmin'), 'Gladiador es una mezcla perfecta de acción y drama. Las escenas de combate son épicas y la historia de venganza te atrapa desde el principio.', '2024-02-20', 9),  -- Gladiador
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Titanic'),   (SELECT id FROM user_entity WHERE username = 'CarlosGomez92'), 'Titanic es una película que combina romance y tragedia de manera impecable. A pesar de ser una historia conocida, siempre conmueve.', '2024-02-22', 8),  -- Titanic
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'El Señor de los Anillos: El Retorno del Rey'),  (SELECT id FROM user_entity WHERE username = 'LauraMartinez'), 'El Señor de los Anillos: El Retorno del Rey es el cierre perfecto para una saga épica. Con batallas impresionantes y personajes que has llegado a querer, es una obra maestra de la fantasía.', '2024-02-25', 10),  -- El Señor de los Anillos: El Retorno del Rey
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'Inception'), (SELECT id FROM user_entity WHERE username = 'AndresLopez'), 'Una trama que te hace cuestionar la realidad, muy bien hecha.', '2024-03-25', 9),
+    (gen_random_uuid(), (SELECT id FROM pelicula WHERE titulo = 'El Silencio de los Inocentes'),  (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'Un thriller psicológico increíble, con una actuación sobresaliente.', '2024-03-28', 9);

@@ -10,5 +10,6 @@ public enum Genero {
     COMEDIA,
     TERROR,
     ANIME,
-    AVENTURA
+    AVENTURA,
+    ANIMACION
 }
