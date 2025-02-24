@@ -12,6 +12,7 @@ import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
 import com.example.CinematicMultiverse.user.service.UsuarioService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class AuthController {
     private final UsuarioService usuarioService;
 
     @PostMapping("/auth/register")
-    public ResponseEntity<UserResponse> register(@RequestBody  CreateUserRequest createUserRequest) {
+    public ResponseEntity<UserResponse> register(@RequestBody @Valid CreateUserRequest createUserRequest) {
 
 
         Usuario usuario = usuarioService.createUser(createUserRequest);
