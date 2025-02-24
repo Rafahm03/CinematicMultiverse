@@ -14,6 +14,7 @@ public interface ReseniaRepository extends JpaRepository<Resenia, UUID> {
     List<Resenia> findByPeliculaId(UUID peliculaId);
     List<Resenia> findByUsuarioId(UUID usuarioId);
     List<Resenia> findByUsuarioUsername(String username);
+    List<Resenia> findByPelicula_Titulo(String titulo);
     Optional<Resenia> findByUsuarioAndPelicula(Usuario usuario, Pelicula pelicula);
 
 }

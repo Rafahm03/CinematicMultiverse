@@ -81,4 +81,19 @@ public class ReseniaService {
     }
 
 
+    @Transactional
+    public List<GetReseniaDto> findReviewsByTitulo(String tituloPelicula) {
+        List<Resenia> result = reseniaRepository.findByPelicula_Titulo(tituloPelicula);
+
+        if (result.isEmpty()) {
+            throw new ReseniaNotFoundException("No existen reseñas para la película con título: " + tituloPelicula);
+        }
+
+        return result.stream()
+                .map(GetReseniaDto::of)
+                .toList();
+    }
+
+
+
 }
