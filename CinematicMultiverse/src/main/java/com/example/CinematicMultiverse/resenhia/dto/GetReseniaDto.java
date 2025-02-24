@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public record GetReseniaDto(
         UUID id,
-        UUID usuarioId,
-        UUID peliculaId,
+        String username,
+        String tituloPelicula,
         double puntuacion,
         String comentario,
         LocalDateTime fechaPublicacion
@@ -16,8 +16,8 @@ public record GetReseniaDto(
     public static GetReseniaDto of(Resenia resenia) {
         return new GetReseniaDto(
                 resenia.getId(),
-                resenia.getUsuario().getId(),
-                resenia.getPelicula().getId(),
+                resenia.getUsuario().getUsername(),
+                resenia.getPelicula().getTitulo(),
                 resenia.getPuntuacion(),
                 resenia.getComentario(),
                 resenia.getFechaPublicacion()
