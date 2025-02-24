@@ -4,6 +4,7 @@ import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
 import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.resenhia.dto.CreateReseniaRequest;
+import com.example.CinematicMultiverse.resenhia.dto.EditReseniaCmd;
 import com.example.CinematicMultiverse.resenhia.dto.GetReseniaDto;
 import com.example.CinematicMultiverse.resenhia.error.ReseniaNotFoundException;
 import com.example.CinematicMultiverse.resenhia.error.ReseniaYaExiste;
@@ -98,7 +99,17 @@ public class ReseniaController {
         return ResponseEntity.ok(reviews);
     }
 
+    @PutMapping("/editarReview/{id}")
+    public ResponseEntity<GetReseniaDto> editarResenia(@PathVariable UUID id,
+                                                       @RequestBody EditReseniaCmd editReseniaCmd,
+                                                       @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
 
+        Resenia resenia = reseniaService.editarResenia(id, editReseniaCmd, username);
+        GetReseniaDto reseniaDto = GetReseniaDto.of(resenia);
+
+        return ResponseEntity.ok(reseniaDto);
+    }
 
 
 
