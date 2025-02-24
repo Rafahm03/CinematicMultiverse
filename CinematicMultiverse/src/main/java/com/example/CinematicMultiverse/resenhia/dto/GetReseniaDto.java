@@ -8,7 +8,7 @@ import java.util.UUID;
 public record GetReseniaDto(
         Long id,
         UUID usuarioId,
-        Long peliculaId,
+        UUID peliculaId,
         int puntuacion,
         String comentario,
         LocalDateTime fechaPublicacion

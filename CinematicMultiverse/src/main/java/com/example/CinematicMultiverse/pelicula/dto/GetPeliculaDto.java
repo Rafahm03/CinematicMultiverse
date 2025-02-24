@@ -6,10 +6,11 @@ import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
 import com.example.CinematicMultiverse.user.model.Usuario;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public record GetPeliculaDto(
-        Long id,
+        UUID id,
         String titulo,
         String sinopsis,
         double puntuacion,
