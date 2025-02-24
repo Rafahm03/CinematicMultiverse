@@ -11,7 +11,8 @@ public record GetReseniaDto(
         String tituloPelicula,
         double puntuacion,
         String comentario,
-        LocalDateTime fechaPublicacion
+        LocalDateTime fechaPublicacion,
+        boolean isEdit
 ) {
     public static GetReseniaDto of(Resenia resenia) {
         return new GetReseniaDto(
@@ -20,7 +21,8 @@ public record GetReseniaDto(
                 resenia.getPelicula().getTitulo(),
                 resenia.getPuntuacion(),
                 resenia.getComentario(),
-                resenia.getFechaPublicacion()
+                resenia.getFechaPublicacion(),
+                resenia.isEdit()
         );
     }
 }

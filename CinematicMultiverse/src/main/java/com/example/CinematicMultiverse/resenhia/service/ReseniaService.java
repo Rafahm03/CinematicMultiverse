@@ -5,9 +5,11 @@ import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.repo.PeliculaRepository;
 import com.example.CinematicMultiverse.resenhia.dto.CreateReseniaRequest;
+import com.example.CinematicMultiverse.resenhia.dto.EditReseniaCmd;
 import com.example.CinematicMultiverse.resenhia.dto.GetReseniaDto;
 import com.example.CinematicMultiverse.resenhia.error.ReseniaNotFoundException;
 import com.example.CinematicMultiverse.resenhia.error.ReseniaYaExiste;
+import com.example.CinematicMultiverse.resenhia.error.UnauthorizedAccessException;
 import com.example.CinematicMultiverse.resenhia.model.Resenia;
 import com.example.CinematicMultiverse.resenhia.repo.ReseniaRepository;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
@@ -93,6 +95,22 @@ public class ReseniaService {
                 .map(GetReseniaDto::of)
                 .toList();
     }
+
+    @Transactional
+    public Resenia editarResenia(UUID id, EditReseniaCmd editReseniaCmd, String username) {
+        Resenia resenia = reseniaRepository.findById(id).orElseThrow(() -> new ReseniaNotFoundException("Reseña no encontrada"));
+
+        if (!resenia.getUsuario().getUsername().equals(username)) {
+            throw new UnauthorizedAccessException("No tienes permiso para editar esta reseña");
+        }
+
+        resenia.setComentario(editReseniaCmd.comentario());
+        resenia.setPuntuacion(editReseniaCmd.puntuacion());
+        resenia.setEdit(true);
+
+        return reseniaRepository.save(resenia);
+    }
+
 
 
 

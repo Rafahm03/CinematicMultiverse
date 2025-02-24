@@ -35,6 +35,8 @@ public class Resenia {
 
     private LocalDateTime fechaPublicacion;
 
+    private boolean isEdit;
+
     @PrePersist
     protected void onCreate() {
         fechaPublicacion = LocalDateTime.now();
