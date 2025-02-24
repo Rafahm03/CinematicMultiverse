@@ -9,7 +9,7 @@ public record GetReseniaDto(
         UUID id,
         UUID usuarioId,
         UUID peliculaId,
-        int puntuacion,
+        double puntuacion,
         String comentario,
         LocalDateTime fechaPublicacion
 ) {

@@ -107,14 +107,12 @@ public class PeliculaService {
         peliculaRepository.delete(pelicula);
     }
 
+    @Transactional
     public List<GetPeliculaDto> search(List<SearchCriteria> searchCriteriaList) {
         PeliculaSpecificationBuilder peliculaSpecificationBuilder = new PeliculaSpecificationBuilder(searchCriteriaList);
         Specification<Pelicula> where = peliculaSpecificationBuilder.build();
 
-
         List<Pelicula> peliculas = peliculaRepository.findAll(where);
-
-
 
         log.info("Cantidad de películas encontradas: " + peliculas.size());
 
@@ -125,7 +123,7 @@ public class PeliculaService {
         return peliculas.stream()
                 .map(GetPeliculaDto::of)
                 .toList();
-
     }
+
 }
 

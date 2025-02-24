@@ -28,7 +28,7 @@ public class Resenia {
     private Pelicula pelicula;
 
     @Column(nullable = false)
-    private int puntuacion;
+    private double puntuacion;
 
     @Column(columnDefinition = "TEXT")
     private String comentario;

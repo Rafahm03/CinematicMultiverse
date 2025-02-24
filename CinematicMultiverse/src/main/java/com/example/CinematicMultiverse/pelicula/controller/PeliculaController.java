@@ -169,23 +169,24 @@ public class PeliculaController {
 
 
     @GetMapping("/buscar")
-    public List<GetPeliculaDto> buscar(@RequestParam(value="search", required = false) String search) {
+    public List<GetPeliculaDto> buscar(@RequestParam(value = "search", required = false) String search) {
         log.info(search);
-        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
-        if (search != null) {
+
+        List<SearchCriteria> params = new ArrayList<>();
+        if (search != null && !search.trim().isEmpty()) {  // Aseguramos que search no esté vacío
             Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
             Matcher matcher = pattern.matcher(search + ",");
             while (matcher.find()) {
-                log.info(matcher.group(1));
-                log.info(matcher.group(2));
-                log.info(matcher.group(3));
+                log.info(matcher.group(1)); // key
+                log.info(matcher.group(2)); // operation
+                log.info(matcher.group(3)); // value
                 params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
             }
         }
 
         return peliculaService.search(params);
-
     }
+
 
 
 }

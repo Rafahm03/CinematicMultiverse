@@ -6,7 +6,7 @@ import java.util.UUID;
 public record CreateReseniaRequest(
         UUID usuarioId,
         UUID peliculaId,
-        int puntuacion,
+        double puntuacion,
         String comentario,
         LocalDate fechaPublicacion
 ) {
