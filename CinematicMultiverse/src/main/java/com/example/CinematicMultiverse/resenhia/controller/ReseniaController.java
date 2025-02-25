@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +46,7 @@ public class ReseniaController {
 
 
     @PostMapping("/crearReview")
-    public ResponseEntity<GetReseniaDto> crearResenia(@RequestBody CreateReseniaRequest createReseniaRequest,
+    public ResponseEntity<GetReseniaDto> crearResenia(@RequestBody @Valid CreateReseniaRequest createReseniaRequest,
                                                       @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         String tituloPelicula = createReseniaRequest.tituloPelicula();

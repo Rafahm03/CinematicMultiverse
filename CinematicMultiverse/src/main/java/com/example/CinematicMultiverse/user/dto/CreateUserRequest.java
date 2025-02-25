@@ -4,6 +4,7 @@ package com.example.CinematicMultiverse.user.dto;
 import com.example.CinematicMultiverse.user.validation.FieldsValueMatch;
 import com.example.CinematicMultiverse.user.validation.UniqueUsername;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @FieldsValueMatch.List({
         @FieldsValueMatch(
@@ -21,6 +22,8 @@ public record CreateUserRequest(
         String username,
 
         @NotBlank(message = "La contraseña es obligatoria")
+        @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[a-z]).{8,}$",
+                message = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.")
         String password,
 
         @NotBlank(message = "Debes confirmar la contraseña")
