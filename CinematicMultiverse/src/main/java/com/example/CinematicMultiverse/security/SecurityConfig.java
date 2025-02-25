@@ -69,6 +69,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authz -> authz
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/error").permitAll()
                 .requestMatchers("/activate/account/").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/me/admin").hasRole("ADMIN")
                 .requestMatchers("/user/perfil", "review/crearReview", "review/myReviews", "review/**", "/favoritos/**").authenticated()
                 .requestMatchers("/user/**", "/user/admin/").hasRole("ADMIN")

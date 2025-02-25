@@ -13,6 +13,7 @@ import com.example.CinematicMultiverse.resenhia.service.ReseniaService;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
 import com.example.CinematicMultiverse.user.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -44,14 +45,23 @@ public class ReseniaController {
     private final UsuarioService usuarioService;
 
 
+    @Operation(
+            summary = "Crear una nueva reseña",
+            description = "Permite a un usuario autenticado crear una reseña sobre una película."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Reseña creada con éxito"),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada incorrectos"),
+            @ApiResponse(responseCode = "401", description = "Usuario no autenticado")
+    })
     @PostMapping("/crearReview")
-    public ResponseEntity<GetReseniaDto> crearResenia(@RequestBody CreateReseniaRequest createReseniaRequest,
-                                                      @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<GetReseniaDto> crearResenia(
+            @RequestBody CreateReseniaRequest createReseniaRequest,
+            @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         String tituloPelicula = createReseniaRequest.tituloPelicula();
 
         Resenia resenia = reseniaService.crearReview(username, createReseniaRequest, tituloPelicula);
-
         GetReseniaDto reseniaDto = GetReseniaDto.of(resenia);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reseniaDto);
@@ -120,11 +130,22 @@ public class ReseniaController {
     }
 
 
-
+    @Operation(
+            summary = "Editar una reseña existente",
+            description = "Permite a un usuario autenticado editar una reseña que ha creado previamente."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reseña editada con éxito"),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada incorrectos"),
+            @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+            @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para editar esta reseña"),
+            @ApiResponse(responseCode = "404", description = "Reseña no encontrada")
+    })
     @PutMapping("/editarReview/{id}")
-    public ResponseEntity<GetReseniaDto> editarResenia(@PathVariable UUID id,
-                                                       @RequestBody EditReseniaCmd editReseniaCmd,
-                                                       @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<GetReseniaDto> editarResenia(
+            @Parameter(description = "ID de la reseña a editar") @PathVariable UUID id,
+            @RequestBody EditReseniaCmd editReseniaCmd,
+            @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
 
         Resenia resenia = reseniaService.editarResenia(id, editReseniaCmd, username);
@@ -132,10 +153,20 @@ public class ReseniaController {
 
         return ResponseEntity.ok(reseniaDto);
     }
-
+    @Operation(
+            summary = "Eliminar una reseña",
+            description = "Permite a un usuario autenticado eliminar una reseña que ha creado."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Reseña eliminada con éxito"),
+            @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+            @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para eliminar esta reseña"),
+            @ApiResponse(responseCode = "404", description = "Reseña no encontrada")
+    })
     @DeleteMapping("/eliminarReview/{id}")
-    public ResponseEntity<Void> eliminarResenia(@PathVariable UUID id,
-                                                @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Void> eliminarResenia(
+            @Parameter(description = "ID de la reseña a eliminar") @PathVariable UUID id,
+            @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
 
         reseniaService.eliminarResenia(id, username);

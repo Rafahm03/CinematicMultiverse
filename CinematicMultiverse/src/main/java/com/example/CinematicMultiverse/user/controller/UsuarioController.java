@@ -27,12 +27,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/user")
@@ -82,13 +79,11 @@ public class UsuarioController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-        // Verifica que el usuario tenga el rol de ADMIN
         if (authentication.getAuthorities().stream()
                 .noneMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
         }
 
-        // Configurar paginación y ordenación
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
