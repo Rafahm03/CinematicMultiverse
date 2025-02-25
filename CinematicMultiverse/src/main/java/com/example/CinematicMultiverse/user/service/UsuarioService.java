@@ -2,6 +2,7 @@ package com.example.CinematicMultiverse.user.service;
 
 import com.example.CinematicMultiverse.user.dto.CreateUserRequest;
 import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
+import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
 import com.example.CinematicMultiverse.user.error.ActivationExpiredException;
 import com.example.CinematicMultiverse.user.error.UnauthorizedActionException;
 import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
@@ -9,8 +10,11 @@ import com.example.CinematicMultiverse.user.model.UserRole;
 import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
 import com.example.CinematicMultiverse.util.MailService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,11 +73,12 @@ public class UsuarioService {
                 .orElseThrow(() -> new ActivationExpiredException("El código de activación no existe o ha caducado"));
     }
 
-    public List<Usuario> findAll(){
-        List<Usuario> result = usuarioRepository.findAll();
+    @Transactional
+    public Page<GetUsuarioDto> findAll(Pageable pageable){
+        Page<Usuario> result = usuarioRepository.findAll(pageable);
         if(result.isEmpty())
             throw new UsuarioNotFoundException("No hay usuarios con esos criterios de busqueda");
-        return result;
+        return result.map(GetUsuarioDto::of);
     }
 
     public Usuario findByUsername(String username) {

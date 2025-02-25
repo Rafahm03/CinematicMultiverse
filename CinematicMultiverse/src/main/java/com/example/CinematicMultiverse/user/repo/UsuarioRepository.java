@@ -1,6 +1,8 @@
 package com.example.CinematicMultiverse.user.repo;
 
 import com.example.CinematicMultiverse.user.model.Usuario;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -15,5 +17,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
 
     boolean existsByUsername(String username);
 
-
+    Page<Usuario> findAll(Pageable pageable);
 }
