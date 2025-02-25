@@ -37,6 +37,19 @@ public class FavoritoController {
         return ResponseEntity.ok("Película añadida a favoritos");
     }
 
+    @Operation(summary = "Obtener la lista de favoritos", description = "Devuelve la lista de películas favoritas del usuario autenticado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de favoritos obtenida con éxito"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "400", description = "Lista vacía o error en la solicitud")
+    })
+    @GetMapping("/list")
+    public ResponseEntity<List<GetPeliculaDto>> mostrarListaFavoritos(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        return ResponseEntity.ok(favoritoService.mostrarListaFavoritos(username));
+    }
+
+
 
 
 }
