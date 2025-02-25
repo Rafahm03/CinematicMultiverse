@@ -4,6 +4,7 @@ import com.example.CinematicMultiverse.files.model.FileMetadata;
 import com.example.CinematicMultiverse.files.service.StorageService;
 import com.example.CinematicMultiverse.pelicula.dto.EditPeliculaCmd;
 import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
+import com.example.CinematicMultiverse.pelicula.error.PeliculaAlreadyExistsException;
 import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
 import com.example.CinematicMultiverse.pelicula.model.Genero;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
@@ -35,7 +36,7 @@ public class PeliculaService {
     @Transactional
     public GetPeliculaDto getPeliculaDtoByTitulo(String titulo) {
         Pelicula pelicula = peliculaRepository.findByTitulo(titulo)
-                .orElseThrow(() -> new RuntimeException("Película no encontrada"));
+                .orElseThrow(() -> new PeliculaNotFoundException("Película no encontrada"));
 
         Set<String> generos = pelicula.getGeneros().stream()
                 .map(Enum::name)
@@ -60,6 +61,10 @@ public class PeliculaService {
     }
 
     public Pelicula save(EditPeliculaCmd editPeliculaCmd, MultipartFile file) {
+        peliculaRepository.findByTitulo(editPeliculaCmd.titulo())
+                .ifPresent(p -> {
+                    throw new PeliculaAlreadyExistsException("La película con el título '" + editPeliculaCmd.titulo() + "' ya existe");
+                });
         FileMetadata fileMetadata = storageService.store(file);
 
         String filename = fileMetadata.getFilename();
