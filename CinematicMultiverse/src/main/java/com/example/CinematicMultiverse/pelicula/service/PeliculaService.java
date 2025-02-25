@@ -1,5 +1,7 @@
 package com.example.CinematicMultiverse.pelicula.service;
 
+import com.example.CinematicMultiverse.files.model.FileMetadata;
+import com.example.CinematicMultiverse.files.service.StorageService;
 import com.example.CinematicMultiverse.pelicula.dto.EditPeliculaCmd;
 import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
 import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
@@ -7,16 +9,14 @@ import com.example.CinematicMultiverse.pelicula.model.Genero;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.repo.PeliculaRepository;
 import com.example.CinematicMultiverse.query.PeliculaSpecificationBuilder;
-import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
-import com.example.CinematicMultiverse.user.error.UsuarioNotFoundException;
-import com.example.CinematicMultiverse.user.model.UserRole;
-import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.util.SearchCriteria;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 public class PeliculaService {
 
     private final PeliculaRepository peliculaRepository;
+    private final StorageService storageService;
+
 
     @Transactional
     public GetPeliculaDto getPeliculaDtoByTitulo(String titulo) {
@@ -57,7 +59,13 @@ public class PeliculaService {
                 .toList();
     }
 
-    public Pelicula save(EditPeliculaCmd editPeliculaCmd) {
+    public Pelicula save(EditPeliculaCmd editPeliculaCmd, MultipartFile file) {
+        FileMetadata fileMetadata = storageService.store(file);
+
+        String filename = fileMetadata.getFilename();
+        String imageUrl = this.getImageUrl(filename);
+
+
         Set<Genero> generos = editPeliculaCmd.generos().stream()
                 .map(String::toUpperCase)
                 .map(Genero::valueOf)
@@ -67,7 +75,7 @@ public class PeliculaService {
                 .titulo(editPeliculaCmd.titulo())
                 .sinopsis(editPeliculaCmd.sinopsis())
                 .puntuacion(editPeliculaCmd.puntuacion())
-                .imagen(editPeliculaCmd.imagen())
+                .imagen(imageUrl)
                 .duracion(editPeliculaCmd.duracion())
                 .anio(editPeliculaCmd.anio())
                 .generos(generos)
@@ -75,6 +83,14 @@ public class PeliculaService {
 
         return peliculaRepository.save(pelicula);
     }
+
+
+public String getImageUrl(String filename) {
+    return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/download/")
+            .path(filename)
+            .toUriString();
+}
 
     @Transactional
     public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, String titulo) {
@@ -124,6 +140,8 @@ public class PeliculaService {
                 .map(GetPeliculaDto::of)
                 .toList();
     }
+
+
 
 }
 

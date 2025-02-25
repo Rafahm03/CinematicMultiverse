@@ -19,11 +19,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,31 +55,17 @@ public class PeliculaController {
                     content = @Content)
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/guardar")
+    @PostMapping(value = "/guardar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GetPeliculaDto> guardarPelicula(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Detalles de la película a guardar",
-                    required = true,
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EditPeliculaCmd.class),
-                            examples = @ExampleObject(value = """
-                                {
-                                    "titulo": "The Incredible Hulk",
-                                    "sinopsis": "Bruce Banner busca una cura para su condición mientras es perseguido por el ejército de los EE.UU.",
-                                    "puntuacion": 7.0,
-                                    "imagen": "https://example.com/the-incredible-hulk.jpg",
-                                    "duracion": 112,
-                                    "anio": 2008,
-                                    "genero": "ACCION"
-                                }
-                        """)))
-            @RequestBody EditPeliculaCmd editPeliculaCmd) {
+            @RequestPart("editPeliculaCmd") EditPeliculaCmd editPeliculaCmd,
+            @RequestPart("file") MultipartFile file) {
 
-        Pelicula nuevaPelicula = peliculaService.save(editPeliculaCmd);
+        Pelicula nuevaPelicula = peliculaService.save(editPeliculaCmd, file);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(GetPeliculaDto.of(nuevaPelicula));
     }
+
 
 
 
