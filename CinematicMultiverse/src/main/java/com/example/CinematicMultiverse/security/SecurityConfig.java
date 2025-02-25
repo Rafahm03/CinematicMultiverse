@@ -70,7 +70,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/error").permitAll()
                 .requestMatchers("/activate/account/").permitAll()
                 .requestMatchers("/me/admin").hasRole("ADMIN")
-                .requestMatchers("/user/perfil", "review/crearReview", "review/myReviews", "review/**").authenticated()
+                .requestMatchers("/user/perfil", "review/crearReview", "review/myReviews", "review/**", "/favoritos/**").authenticated()
                 .requestMatchers("/user/**", "/user/admin/").hasRole("ADMIN")
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated());
