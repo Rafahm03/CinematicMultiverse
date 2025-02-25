@@ -43,5 +43,28 @@ public class FavoritoService {
         favoritoRepository.save(favorito);
     }
 
+    @Transactional
+    public List<GetPeliculaDto> mostrarListaFavoritos(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
+        List<GetPeliculaDto> favoritos = favoritoRepository.findByUsuario(usuario)
+                .stream()
+                .map(favorito -> GetPeliculaDto.of(favorito.getPelicula()))
+                .collect(Collectors.toList());
+
+
+        if (favoritos.isEmpty()) {
+            throw new FavoritosVacioException();
+        }
+
+
+        return favoritos;
+    }
+
+
+
+
 
 }
