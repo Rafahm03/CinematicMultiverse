@@ -15,6 +15,6 @@ public class UniqueUsernameValidator implements ConstraintValidator<UniqueUserna
             return true;
         }
 
-        return !usuarioRepository.existsByUsername(s);
+        return !usuarioRepository.existsByEmail(s);
     }
 }

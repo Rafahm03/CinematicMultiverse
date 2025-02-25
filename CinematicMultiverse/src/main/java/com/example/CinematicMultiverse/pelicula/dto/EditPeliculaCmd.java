@@ -3,6 +3,7 @@ package com.example.CinematicMultiverse.pelicula.dto;
 import java.util.List;
 
 public record EditPeliculaCmd(
+
         String titulo,
         String sinopsis,
         double puntuacion,
@@ -10,5 +11,6 @@ public record EditPeliculaCmd(
         int duracion,
         int anio,
         List<String> generos
+
 ) {
 }

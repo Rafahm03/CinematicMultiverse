@@ -53,7 +53,6 @@ public class ReseniaService {
             throw new ReseniaYaExiste("El usuario ya ha dejado una reseña para esta película");
         }
 
-        // Crear la nueva reseña
         Resenia resenia = Resenia.builder()
                 .usuario(optionalUsuario.get())
                 .pelicula(optionalPelicula.get())
