@@ -1,5 +1,6 @@
 package com.example.CinematicMultiverse.user.model;
 
+import com.example.CinematicMultiverse.favorito.model.Favorito;
 import com.example.CinematicMultiverse.resenhia.model.Resenia;
 import jakarta.persistence.*;
 import lombok.*;
@@ -63,6 +64,12 @@ public class Usuario implements UserDetails {
     public void removeResenia(Resenia resenia) {
         resenias.remove(resenia);
     }
+
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Favorito> favoritos = new ArrayList<>();
+
 
     @Builder.Default
     private boolean enabled = false;
