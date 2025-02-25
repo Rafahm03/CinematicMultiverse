@@ -13,6 +13,8 @@ import com.example.CinematicMultiverse.util.SearchCriteria;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,16 +49,14 @@ public class PeliculaService {
     }
 
     @Transactional
-    public List<GetPeliculaDto> findAll() {
-        List<Pelicula> result = peliculaRepository.findAll();
+    public Page<GetPeliculaDto> findAll(Pageable pageable) {
+        Page<Pelicula> result = peliculaRepository.findAll(pageable);
 
         if (result.isEmpty()) {
             throw new PeliculaNotFoundException("No existen películas");
         }
 
-        return result.stream()
-                .map(GetPeliculaDto::of)
-                .toList();
+        return result.map(GetPeliculaDto::of);
     }
 
     public Pelicula save(EditPeliculaCmd editPeliculaCmd, MultipartFile file) {

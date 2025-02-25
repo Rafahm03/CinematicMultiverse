@@ -18,6 +18,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -89,14 +93,16 @@ public class PeliculaController {
     })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
-    public ResponseEntity<List<GetPeliculaDto>> getAllPeliculas() {
-        List<GetPeliculaDto> peliculas = peliculaService.findAll();
+    public Page<GetPeliculaDto> obtenerPeliculas(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "titulo") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        if (peliculas.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(peliculas);
+        return peliculaService.findAll(pageable);
     }
 
     @Operation(summary = "Obtiene una película por su TITULO")

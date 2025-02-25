@@ -18,6 +18,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -71,15 +75,24 @@ public class UsuarioController {
     })
 
     @GetMapping("/")
-    public ResponseEntity<List<GetUsuarioDto>> getAll(Authentication authentication) {
+    public ResponseEntity<Page<GetUsuarioDto>> getAll(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        // Verifica que el usuario tenga el rol de ADMIN
         if (authentication.getAuthorities().stream()
-                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
+                .noneMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
         }
 
-        List<GetUsuarioDto> usuarios = usuarioService.findAll().stream()
-                .map(GetUsuarioDto::of)
-                .collect(Collectors.toList());
+        // Configurar paginación y ordenación
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<GetUsuarioDto> usuarios = usuarioService.findAll(pageable);
 
         return ResponseEntity.ok(usuarios);
     }

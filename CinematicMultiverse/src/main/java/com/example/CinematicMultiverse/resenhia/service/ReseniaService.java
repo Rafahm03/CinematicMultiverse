@@ -17,6 +17,8 @@ import com.example.CinematicMultiverse.user.model.Usuario;
 import com.example.CinematicMultiverse.user.repo.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -70,31 +72,36 @@ public class ReseniaService {
 
 
     @Transactional
-    public List<GetReseniaDto> findByUsername(String username) {
-        List<Resenia> result = reseniaRepository.findByUsuarioUsername(username);
+    public Page<GetReseniaDto> findByUsername(String username, Pageable pageable) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByUsername(username);
+
+        if (!usuarioOptional.isPresent()) {
+            throw new UsuarioNotFoundException("No existe un usuario con ese username");
+        }
+
+        Page<Resenia> result = reseniaRepository.findAllByUsuario(usuarioOptional.get(), pageable);
 
         if (result.isEmpty()) {
             throw new ReseniaNotFoundException("No existen reseñas para el usuario con ese username");
         }
 
-        return result.stream()
-                .map(GetReseniaDto::of)
-                .toList();
+        return result.map(GetReseniaDto::of);
     }
 
 
+
+
     @Transactional
-    public List<GetReseniaDto> findReviewsByTitulo(String tituloPelicula) {
-        List<Resenia> result = reseniaRepository.findByPelicula_Titulo(tituloPelicula);
+    public Page<GetReseniaDto> findReviewsByTitulo(String tituloPelicula, Pageable pageable) {
+        Page<Resenia> result = reseniaRepository.findAllByPelicula_Titulo(tituloPelicula, pageable);
 
         if (result.isEmpty()) {
             throw new ReseniaNotFoundException("No existen reseñas para la película con título: " + tituloPelicula);
         }
 
-        return result.stream()
-                .map(GetReseniaDto::of)
-                .toList();
+        return result.map(GetReseniaDto::of);
     }
+
 
     @Transactional
     public Resenia editarResenia(UUID id, EditReseniaCmd editReseniaCmd, String username) {

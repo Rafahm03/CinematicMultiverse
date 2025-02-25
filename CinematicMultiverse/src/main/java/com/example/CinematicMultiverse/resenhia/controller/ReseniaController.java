@@ -21,6 +21,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,32 +57,29 @@ public class ReseniaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reseniaDto);
     }
 
-
-
     @Operation(summary = "Obtiene todas las Reseñas de un Usuario")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-                    description = "Se han encontrado las reviews",
+            @ApiResponse(responseCode = "200", description = "Se han encontrado las reviews",
                     content = {@Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = GetReseniaDto.class)),
                             examples = {@ExampleObject(
                                     value = """
-                                            [
-                                                "peliculaId": 2001,
-                                                "puntuacion": 5,
-                                                "comentario": "¡Una película increíble!"
-                                            ]
-                                            
-                                            """
-                            )}
-                    )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se han encontrado reviews",
-                    content = @Content)
+                                         [
+                                             {"peliculaId": 2001, "puntuacion": 5, "comentario": "¡Una película increíble!"}
+                                         ]
+                                         """
+                            )})}),
+            @ApiResponse(responseCode = "404", description = "No se han encontrado reviews", content = @Content)
     })
-    @GetMapping("/myReviews")
-    public ResponseEntity<List<GetReseniaDto>> getMyAllReviews(@AuthenticationPrincipal UserDetails userDetails) {
-        List<GetReseniaDto> reviews = reseniaService.findByUsername(userDetails.getUsername());
+    @GetMapping("/myReviews/{username}")
+    public ResponseEntity<Page<GetReseniaDto>> getMyAllReviews(
+            @PathVariable String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<GetReseniaDto> reviews = reseniaService.findByUsername(username, pageable);
 
         if (reviews.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -87,10 +88,29 @@ public class ReseniaController {
         return ResponseEntity.ok(reviews);
     }
 
-
+    @Operation(summary = "Obtiene todas las Reseñas por título de película")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Se han encontrado las reviews",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetReseniaDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                         [
+                                             {"peliculaId": 2001, "puntuacion": 5, "comentario": "¡Una película increíble!"}
+                                         ]
+                                         """
+                            )})}),
+            @ApiResponse(responseCode = "404", description = "No se han encontrado reviews", content = @Content)
+    })
     @GetMapping("/buscarReviews")
-    public ResponseEntity<List<GetReseniaDto>> buscarReviews(@RequestParam(value = "tituloPelicula") String tituloPelicula) {
-        List<GetReseniaDto> reviews = reseniaService.findReviewsByTitulo(tituloPelicula);
+    public ResponseEntity<Page<GetReseniaDto>> buscarReviews(
+            @RequestParam(value = "tituloPelicula") String tituloPelicula,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<GetReseniaDto> reviews = reseniaService.findReviewsByTitulo(tituloPelicula, pageable);
 
         if (reviews.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -98,6 +118,8 @@ public class ReseniaController {
 
         return ResponseEntity.ok(reviews);
     }
+
+
 
     @PutMapping("/editarReview/{id}")
     public ResponseEntity<GetReseniaDto> editarResenia(@PathVariable UUID id,
