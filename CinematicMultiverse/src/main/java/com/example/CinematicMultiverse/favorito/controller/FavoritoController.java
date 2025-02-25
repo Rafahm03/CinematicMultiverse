@@ -49,6 +49,21 @@ public class FavoritoController {
         return ResponseEntity.ok(favoritoService.mostrarListaFavoritos(username));
     }
 
+    @Operation(summary = "Eliminar una película de favoritos", description = "Permite a un usuario eliminar una película de su lista de favoritos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Película eliminada con éxito"),
+            @ApiResponse(responseCode = "404", description = "Usuario o película no encontrados"),
+            @ApiResponse(responseCode = "400", description = "Error en la solicitud")
+    })
+    @DeleteMapping("/remove")
+    public ResponseEntity<String> removePeliculaFromFavoritos(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody EditFavoritoDto favoritoDto) {
+        String username = userDetails.getUsername();
+        favoritoService.removePeliculaFromFavoritos(username, favoritoDto);
+        return ResponseEntity.ok("Película eliminada de favoritos");
+    }
+
 
 
 

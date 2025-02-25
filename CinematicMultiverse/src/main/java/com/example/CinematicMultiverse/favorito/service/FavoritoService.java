@@ -65,6 +65,25 @@ public class FavoritoService {
 
 
 
+    public void removePeliculaFromFavoritos(String username, EditFavoritoDto editFavoritoDto) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
+        Pelicula pelicula = peliculaRepository.findByTitulo(editFavoritoDto.titulo())
+                .orElseThrow(() -> new RuntimeException("Película no encontrada"));
+
+
+        Favorito favorito = favoritoRepository.findByUsuarioAndPelicula(usuario, pelicula)
+                .orElseThrow(() -> new RuntimeException("La película no está en favoritos"));
+
+
+        favoritoRepository.delete(favorito);
+    }
+
+
+
+
 
 
 }
