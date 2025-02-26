@@ -84,4 +84,5 @@ Puedes probar todas las funcionalidades de la API utilizando herramientas como *
 - **DELETE /favorites/{titulo}**: Eliminar una película de favoritos.
 
 ## Visualización de la Api Rest con FIGMA
-https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&p=f&t=T5Nfoy3BW1kPX3P5-0
+[[https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&p=f&t=T5Nfoy3BW1kPX3P5-0
+](https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&t=3dPLYFOD6zTzAm44-1)](https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&t=3dPLYFOD6zTzAm44-1)
