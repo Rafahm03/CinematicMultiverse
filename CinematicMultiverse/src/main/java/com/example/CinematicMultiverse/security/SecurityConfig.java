@@ -67,10 +67,11 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
         );
         http.authorizeHttpRequests(authz -> authz
+
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/error").permitAll()
-                .requestMatchers("/activate/account/").permitAll()
+                .requestMatchers("/activate/account/", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html" , "/api-docs/**").permitAll()
                 .requestMatchers("/me/admin").hasRole("ADMIN")
-                .requestMatchers("/user/perfil", "review/crearReview", "review/myReviews", "review/**", "/favoritos/**").authenticated()
+                .requestMatchers("/user/perfil", "/review/crearReview", "/review/myReviews", "/review/**", "/favoritos/**").authenticated()
                 .requestMatchers("/user/**", "/user/admin/").hasRole("ADMIN")
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated());
