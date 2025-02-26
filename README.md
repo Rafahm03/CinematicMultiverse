@@ -1,4 +1,4 @@
-# CinematicMultiverse - API REST
+# 🎬 CinematicMultiverse 🎬 - API REST :rocket:
 
 CinematicMultiverse es una API REST diseñada para gestionar una plataforma de películas, donde los usuarios pueden registrarse, agregar reseñas, marcar películas como favoritas, y más. La plataforma también cuenta con un panel de administración para gestionar usuarios y películas.
 
@@ -29,34 +29,34 @@ El administrador tiene todos los permisos de un usuario, además de los siguient
   - **Buscar, editar o eliminar una película** por su título.
   - **Filtrar películas** por diferentes criterios.
 
-## Funcionalidades
+## Funcionalidades 💻
 
-### 1. Funcionalidades de Seguridad
+### 1. Funcionalidades de Seguridad 🔐
 - **Registro**: El usuario podrá registrarse proporcionando sus datos personales. Un correo de activación con un token será enviado a la dirección de correo proporcionada. El usuario deberá ingresar el token para activar su cuenta.
 - **Inicio de sesión**: Una vez activada la cuenta, el usuario podrá iniciar sesión con su usuario y contraseña.
 - **Token de Refresco**: Si el token de acceso caduca, se podrá utilizar un token de refresco para obtener uno nuevo sin necesidad de volver a iniciar sesión.
 
-### 2. Funcionalidades del Usuario
+### 2. Funcionalidades del Usuario 👤
 - Los usuarios pueden **editar su perfil** personal.
 - Los usuarios pueden **agregar películas a sus favoritos** y ver su lista de favoritos.
 - Los usuarios pueden **crear reseñas** para películas, **editar o eliminar** sus reseñas, y ver las reseñas de otras películas.
 
-### 3. Funcionalidades del Administrador
+### 3. Funcionalidades del Administrador 🔑
 - **Gestión de usuarios**: El administrador puede listar, buscar, editar y eliminar usuarios. Además, puede cambiar el rol de un usuario (por ejemplo, de User a Admin).
 - **Gestión de películas**: El administrador puede agregar nuevas películas, listar las existentes (con paginación), buscar, editar o eliminar películas por su título. También puede filtrar las películas según diferentes criterios.
 
-### 4. Funcionalidades de Películas
+### 4. Funcionalidades de Películas 🎥 
 - **Agregar una película**: El administrador puede agregar una película proporcionando los detalles de la película en formato JSON y una imagen de portada.
 - **Listar películas**: El administrador puede ver todas las películas registradas con paginación.
 - **Buscar películas**: El administrador puede buscar películas por título.
 - **Filtrar películas**: Los usuarios pueden buscar películas filtrando por género, puntuación o cualquier otro criterio disponible.
 
-### 5. Funcionalidades de Reseñas
+### 5. Funcionalidades de Reseñas 💬
 - Los usuarios pueden **crear una reseña** para una película.
 - Los usuarios pueden **editar o eliminar** sus reseñas.
 - Los usuarios pueden ver las **reseñas de una película específica**.
 
-### 6. Funcionalidades de Favoritos
+### 6. Funcionalidades de Favoritos ❤️
 - Los usuarios pueden **agregar películas a su lista de favoritos**.
 - Los usuarios pueden **ver su lista de favoritos**.
 - Los usuarios pueden **eliminar películas de su lista de favoritos**.
@@ -83,6 +83,5 @@ Puedes probar todas las funcionalidades de la API utilizando herramientas como *
 - **POST /favorites**: Agregar una película a favoritos.
 - **DELETE /favorites/{titulo}**: Eliminar una película de favoritos.
 
-## Visualización de la Api Rest con FIGMA
-[[https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&p=f&t=T5Nfoy3BW1kPX3P5-0
-](https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&t=3dPLYFOD6zTzAm44-1)](https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&t=3dPLYFOD6zTzAm44-1)
+## Visualización de la Api Rest con FIGMA :star:
+https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&t=3dPLYFOD6zTzAm44-1
