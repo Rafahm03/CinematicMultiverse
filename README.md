@@ -72,16 +72,16 @@ Puedes probar todas las funcionalidades de la API utilizando herramientas como *
 - **POST /refresh-token**: Refrescar el token de acceso.
 - **GET /movies**: Listar todas las películas.
 - **POST /movies**: Crear una nueva película (solo administrador).
-- **GET /movies/{id}**: Obtener detalles de una película.
-- **PUT /movies/{id}**: Editar una película (solo administrador).
-- **DELETE /movies/{id}**: Eliminar una película (solo administrador).
+- **GET /movies/{titulo}**: Obtener detalles de una película.
+- **PUT /movies/{titulo}**: Editar una película (solo administrador).
+- **DELETE /movies/{titulo}**: Eliminar una película (solo administrador).
 - **GET /reviews**: Listar todas las reseñas de un usuario.
 - **POST /reviews**: Crear una nueva reseña.
 - **PUT /reviews/{id}**: Editar una reseña.
 - **DELETE /reviews/{id}**: Eliminar una reseña.
 - **GET /favorites**: Ver la lista de favoritos de un usuario.
 - **POST /favorites**: Agregar una película a favoritos.
-- **DELETE /favorites/{id}**: Eliminar una película de favoritos.
+- **DELETE /favorites/{titulo}**: Eliminar una película de favoritos.
 
 ## Visualización de la Api Rest con FIGMA
 https://www.figma.com/design/BuYIIxOgWAFcpzfKebRV0z/CinematicMultiverse?node-id=0-1&p=f&t=T5Nfoy3BW1kPX3P5-0
