@@ -124,6 +124,7 @@ public class PeliculaController {
 
 
 
+
     @Operation(summary = "Edita una película como admin")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
