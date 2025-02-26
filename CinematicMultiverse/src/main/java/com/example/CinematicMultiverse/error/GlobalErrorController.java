@@ -1,5 +1,9 @@
 package com.example.CinematicMultiverse.error;
 
+import com.example.CinematicMultiverse.favorito.error.FavoritosVacioException;
+import com.example.CinematicMultiverse.resenhia.error.ReseniaNotFoundException;
+import com.example.CinematicMultiverse.resenhia.error.ReseniaYaExiste;
+import com.example.CinematicMultiverse.resenhia.error.UnauthorizedAccessException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
@@ -126,4 +130,43 @@ public class GlobalErrorController
         }
 
     }
+
+    @ExceptionHandler(FavoritosVacioException.class)
+    public ProblemDetail handleFavoritosVacioException(FavoritosVacioException ex) {
+        ProblemDetail result = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        result.setTitle("Lista de favoritos vacía");
+        result.setType(URI.create("https://www.salesianos-triana.edu/errors/favoritos-vacios"));
+        result.setProperty("author", "Rafa");
+
+        return result;
+    }
+
+    @ExceptionHandler(ReseniaYaExiste.class)
+    public ProblemDetail handleReseniaYaExiste(ReseniaYaExiste ex) {
+        ProblemDetail result = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        result.setTitle("Reseña ya existe");
+        result.setType(URI.create("https://www.salesianos-triana.edu/errors/resenia-ya-existe"));
+        result.setProperty("author", "Rafa");
+        return result;
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ProblemDetail handleUnauthorizedAccess(UnauthorizedAccessException ex) {
+        ProblemDetail result = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        result.setTitle("Acceso no autorizado");
+        result.setType(URI.create("https://www.salesianos-triana.edu/errors/acceso-no-autorizado"));
+        result.setProperty("author", "Rafa");
+        return result;
+    }
+
+    @ExceptionHandler(ReseniaNotFoundException.class)
+    public ProblemDetail handleReseniaNotFound(ReseniaNotFoundException ex) {
+        ProblemDetail result = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        result.setTitle("Reseña no encontrada");
+        result.setType(URI.create("https://www.salesianos-triana.edu/errors/resenia-no-encontrada"));
+        result.setProperty("author", "Rafa");
+        return result;
+    }
+
+
 }
