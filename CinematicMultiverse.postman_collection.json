@@ -1,0 +1,1009 @@
+{
+	"info": {
+		"_postman_id": "c0040705-c143-4b7e-97c7-50ee1bfd7cf3",
+		"name": "CinematicMultiverse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38617766"
+	},
+	"item": [
+		{
+			"name": "Security",
+			"item": [
+				{
+					"name": "RegisterUser",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"12345\",\r\n    \"verifyPassword\": \"12345\",\r\n    \"email\": \"hernandez.meraf23@triana.salesianos.edu\",\r\n    \"verifyEmail\": \"hernandez.meraf23@triana.salesianos.edu\",\r\n    \"nombre\": \"Rafa\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"SoyAdmin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AutorizarUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"8b22eb77-6a1c-4a0a-9a78-b37a5b42011d\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/activate/account/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"activate",
+								"account",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ViewUserLogueado",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0YjFjODQ1Ni00ZTI5LTQwMTUtYWYxMi1lODQ3NGMwOTdhN2UiLCJpYXQiOjE3NDAyNTEzOTksImV4cCI6MTc0MDI1MTQ1OX0.eRSgu5792AYssYkIP4p0vYp6zAzFHuEUJHoxHTDHtAo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Rafaa03\",\r\n    \"email\": \"hernandez.meraf23@triana.salesianos.edu\",\r\n    \"roles\": [\"USER\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/me",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RefreshToken",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZDg3OGJjYi02NTA1LTRkMjAtYmMzYi02MTNlNzhmYjZkZWUiLCJpYXQiOjE3NDAwNzY4NDQsImV4cCI6MTc0MDA3NjkwNH0.HFC-LBjgHRNy-hwiB0GNQEWbVflYPTK0uwB3O5sLKFA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"ff874f3b-55c3-4d7f-8b17-51155bd4f800\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/refresh/token",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"refresh",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "UserCRUD",
+			"item": [
+				{
+					"name": "GetAllUsers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3ZGNkMDkxNS0xNWU0LTQ1YzktOGRhNy1jZTJhZDkyNmQ5NGYiLCJpYXQiOjE3NDA0Nzk1MjYsImV4cCI6MTc0MDQ3OTU4Nn0.eR25g1ongNiE5G-psYxJcXodDG99H-aoWb3SmDsJ2_Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/user/?page=1&size=5&sortBy=username&direction=desc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "username"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxZGRhZjNjNS04NTVhLTRkYzUtYjQ4Ny1lMGRkMjMyZTdlZDIiLCJpYXQiOjE3NDAyNDUwOTYsImV4cCI6MTc0MDI0NTE1Nn0.w3_8M1mgYN7LreuzYwj4S4y4Yg7aMyWjk_wky1KhdYc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/user/SoyAdmin",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user",
+								"SoyAdmin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMjYwNjgzOC1mMjRiLTQ4NzEtOWZkZS00YTEzNjZhMDIxZGMiLCJpYXQiOjE3NDAyNDY3MDIsImV4cCI6MTc0MDI0Njc2Mn0.jqs8RG1E0DJUphDPY4y0IBbh8lEpWI2epQldTeOtFvo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/user/ElAdmin",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user",
+								"ElAdmin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditUserAsAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MTYwMzUzOC1iZjU2LTRlMWMtYjg0Yi0wNTY4NmUxMGQ3ZGEiLCJpYXQiOjE3NDAyNTA4NTcsImV4cCI6MTc0MDI1MDkxN30.a3DEUyDLaiRDDnG24FY1ejMgExcj4bWhSO05zxuJDNk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Carlitos\",\r\n    \"email\": \"tucarlitosxulo@gmail.com\",\r\n    \"role\": \"USER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user/admin/LauraMartinez",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user",
+								"admin",
+								"LauraMartinez"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditProfile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0YjFjODQ1Ni00ZTI5LTQwMTUtYWYxMi1lODQ3NGMwOTdhN2UiLCJpYXQiOjE3NDAyNTEzOTksImV4cCI6MTc0MDI1MTQ1OX0.eRSgu5792AYssYkIP4p0vYp6zAzFHuEUJHoxHTDHtAo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"SoyAndres\",\r\n    \"email\": \"andresito@gmail.com\",\r\n    \"nombre\": \"Andres\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user/perfil",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user",
+								"perfil"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pelicula",
+			"item": [
+				{
+					"name": "SavePelicula",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYmM3ODJlZC01OTY5LTQ2MGMtYjFjNi05OGNlZmQ2MDI5ZWIiLCJpYXQiOjE3NDA1MTE0NTIsImV4cCI6MTc0MDUxMTUxMn0.T6mHWETnv6lw4bLq4en-lw1ygaY4ggzP0Cu2Fs6ppE4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/rafac/Downloads/the_incredible_hulk-175130941-mmed.jpg"
+								},
+								{
+									"key": "editPeliculaCmd",
+									"type": "file",
+									"src": "/C:/Users/rafac/Downloads/bodypelicula.json"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/pelicula/guardar",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"pelicula",
+								"guardar"
+							],
+							"query": [
+								{
+									"key": "file",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllPeliculas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1Njc0NTAsImV4cCI6MTc0MDU2ODM1MH0.g3OYul5xkDG8_sDEgjdCG4BN_cMWegNaxbXUjNj5Ii0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/pelicula/?page=5&size=5&sortBy=puntuacion&direction=desc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"pelicula",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "5"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "puntuacion"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPeliculaByTitulo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1Njc0NTAsImV4cCI6MTc0MDU2ODM1MH0.g3OYul5xkDG8_sDEgjdCG4BN_cMWegNaxbXUjNj5Ii0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/pelicula/Vengadores:%20EndGame",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"pelicula",
+								"Vengadores:%20EndGame"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditPeliculaByTitulo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMDM4OWExMy0wZDQ3LTRhZDctYWUyOS02ZTJhNTNhOTk4MmEiLCJpYXQiOjE3NDAzMTcxNzMsImV4cCI6MTc0MDMxNzIzM30.CAhQYN9IpJyzhugpE_TRwpLtgFDxOaqPTCzw4d_5bGM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n        \"id\": 2101,\r\n        \"titulo\": \"Evangelion: 3.0+1.0 Thrice Upon a Time\",\r\n        \"sinopsis\": \"El final de la Ã©pica saga de mechas y existencialismo.\",\r\n        \"puntuacion\": 8.0,\r\n        \"imagen\": \"https://pics.filmaffinity.com/Evangelion_Thrice_Upon_A_Time-123456789-large.jpg\",\r\n        \"duracion\": 155,\r\n        \"anio\": 2021,\r\n        \"generos\": [\r\n            \"FANTASIA\",\r\n            \"ANIME\",\r\n            \"CIENCIA_FICCION\",\r\n            \"ACCION\"\r\n        ]\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/pelicula/Vengadores:%20EndGame",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"pelicula",
+								"Vengadores:%20EndGame"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePelicula",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1Njc0NTAsImV4cCI6MTc0MDU2ODM1MH0.g3OYul5xkDG8_sDEgjdCG4BN_cMWegNaxbXUjNj5Ii0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/pelicula/Vengadores:%20EndGame",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"pelicula",
+								"Vengadores:%20EndGame"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FiltradoPelicula",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1Njc0NTAsImV4cCI6MTc0MDU2ODM1MH0.g3OYul5xkDG8_sDEgjdCG4BN_cMWegNaxbXUjNj5Ii0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/pelicula/buscar?search=anio:2019",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"pelicula",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "anio:2019"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "viewFilmImage",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3MTNhYjNkYy04ZDYzLTRkYzUtOTM3Mi00MGIzMGI4YjQ4NzMiLCJpYXQiOjE3NDA0NzYxMTAsImV4cCI6MTc0MDQ3NjE3MH0.dqNbr75FWc_9_357dJkOumFZRkmndYKV9WUcUQixNug",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/download/hulkposter.jpg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"download",
+								"hulkposter.jpg"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "CreateReview",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1NjgzMjcsImV4cCI6MTc0MDU2OTIyN30.xy1VhPeKaatpvS5gL5TwIrehnHtP9r4kGfevw2z-Ck8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tituloPelicula\": \"La La Land\",\r\n    \"puntuacion\": 5,\r\n    \"comentario\": \"¡Una película increíble!\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/review/crearReview",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"review",
+								"crearReview"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetReviewsByUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1NjgzMjcsImV4cCI6MTc0MDU2OTIyN30.xy1VhPeKaatpvS5gL5TwIrehnHtP9r4kGfevw2z-Ck8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/review/myReviews/SoyAdmin?page=0&size=10",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"review",
+								"myReviews",
+								"SoyAdmin"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetReviewsByPelicula",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1NjgzMjcsImV4cCI6MTc0MDU2OTIyN30.xy1VhPeKaatpvS5gL5TwIrehnHtP9r4kGfevw2z-Ck8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/review/buscarReviews?tituloPelicula=Vengadores%3A%20EndGame&page=0&size=10",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"review",
+								"buscarReviews"
+							],
+							"query": [
+								{
+									"key": "tituloPelicula",
+									"value": "Vengadores%3A%20EndGame"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditReview",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDBlZTYwYy0xOGQyLTRhMDItODZhYy1kYTNkYTdiZGU0MmQiLCJpYXQiOjE3NDA0Mjg2MDIsImV4cCI6MTc0MDQyODY2Mn0.41VFiFUEc1qnoss2OUdXk4qvEE7Pg0d__e5xk-KNw4w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n\r\n        \"puntuacion\": 9.5,\r\n        \"comentario\": \"SIUUUii Una pelÃ­cula increÃ­ble, la mejor de la saga. Los Vengadores luchando por el destino del universo, con efectos impresionantes y personajes icÃ³nicos. Â¡Un espectÃ¡culo!\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/review/editarReview/2f870146-bd3f-4927-b27e-36a95c1634bb",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"review",
+								"editarReview",
+								"2f870146-bd3f-4927-b27e-36a95c1634bb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteReview",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1NjgzMjcsImV4cCI6MTc0MDU2OTIyN30.xy1VhPeKaatpvS5gL5TwIrehnHtP9r4kGfevw2z-Ck8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/review/eliminarReview/7043c85f-76b1-4362-9ff4-4218822ba1fc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"review",
+								"eliminarReview",
+								"7043c85f-76b1-4362-9ff4-4218822ba1fc"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favoritos",
+			"item": [
+				{
+					"name": "MyFavoritos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1Njg2MTksImV4cCI6MTc0MDU2OTUxOX0.zkAwi3NzO2NybLI_4jpSk6P5mOvRa6Pb4sOHC4PO1SQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/favoritos/list",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"favoritos",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddPeliculaToFav",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1Njg0NzUsImV4cCI6MTc0MDU2OTM3NX0.grwiVJa2hSYuZErsKSnJpxy3zqF3RwY_SsMaG4VFebY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Vengadores: EndGame\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/favoritos/add",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"favoritos",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOWU3YzM3MC00OTU3LTRkM2MtOGEzMi01Y2Y2ZjUyMTE5MDkiLCJpYXQiOjE3NDA1Njg2MTksImV4cCI6MTc0MDU2OTUxOX0.zkAwi3NzO2NybLI_4jpSk6P5mOvRa6Pb4sOHC4PO1SQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Vengadores: EndGame\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/favoritos/remove",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"favoritos",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
