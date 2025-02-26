@@ -117,7 +117,7 @@ public class PeliculaController {
     })
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{id}")
+    @GetMapping("/{titulo}")
     public GetPeliculaDto getById(@PathVariable String titulo) {
         return peliculaService.getPeliculaDtoByTitulo(titulo);
     }
