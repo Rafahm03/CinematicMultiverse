@@ -117,10 +117,11 @@ public class PeliculaController {
     })
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{id}")
-    public GetPeliculaDto getById(@PathVariable String titulo) {
+    @GetMapping("/{titulo}")
+    public GetPeliculaDto getPeliculaByTitulo(@PathVariable String titulo) {
         return peliculaService.getPeliculaDtoByTitulo(titulo);
     }
+
 
 
     @Operation(summary = "Edita una película como admin")
