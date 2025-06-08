@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/pelicula")
 @RequiredArgsConstructor
 @Tag(name = "Pelicula", description = "El controlador de pelicula gestiona todas las operaciones relacionadas con esta entidad")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class PeliculaController {
     private final PeliculaService peliculaService;
 
@@ -91,7 +92,6 @@ public class PeliculaController {
                     description = "No se han encontrado películas",
                     content = @Content)
     })
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public Page<GetPeliculaDto> obtenerPeliculas(
             @RequestParam(defaultValue = "0") int page,
