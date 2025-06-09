@@ -163,7 +163,8 @@ export default function Home() {
                 <h2 className="section-title text-white text-2xl text-center mb-4 mt-8">Películas destacadas</h2>
 
                 {}
-                <div className="movie-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
+                <div
+                    className="movie-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 mb-20">
                     {peliculas.map(peli => (
                         <article key={peli.id} className="movie-card bg-gray-900 p-2 rounded-lg shadow-lg">
                             <img
@@ -181,6 +182,7 @@ export default function Home() {
                         </article>
                     ))}
                 </div>
+
 
                 {}
                 {totalPages > 1 && (

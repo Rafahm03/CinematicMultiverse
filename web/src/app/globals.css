@@ -88,6 +88,7 @@
 }
 
 .main-content {
+
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -100,7 +101,8 @@
   font-size: 2rem;
   color: #facc15;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 5rem;
+  margin-top: 5rem;
 }
 
 .movie-grid {
@@ -109,6 +111,7 @@
   width: 100%;
   max-width: 1280px;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  margin-bottom: 50px;
 }
 
 .movie-card {
@@ -276,8 +279,8 @@ html, body, #__next {
 }
 
 .carousel-image {
-  width: 100%;
-height: 400px;
+  width: auto;
+height: auto;
 object-fit: cover;
 border-radius: 1rem;
 display: block;
