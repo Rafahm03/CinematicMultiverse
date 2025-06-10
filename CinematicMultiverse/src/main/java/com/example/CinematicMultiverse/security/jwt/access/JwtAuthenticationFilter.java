@@ -32,52 +32,71 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
+    private static final String[] PUBLIC_URLS = {
+            "/auth/login",
+            "/auth/register",
+            "/auth/refresh/token",
+            "/error",
+            "/activate/account/",
+            "/activate/account/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/api-docs/**",
+            "/pelicula",
+            "/pelicula/**",
+            "/h2-console/**"
+    };
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String token = getJwtAccessTokenFromRequest(request);
-
 
         try {
             if (StringUtils.hasText(token) && jwtService.validateAccessToken(token)) {
-
                 UUID id = jwtService.getUserIdFromAccessToken(token);
 
                 Optional<Usuario> result = usuarioRepository.findById(id);
 
                 if (result.isPresent()) {
                     Usuario usuario = result.get();
-                    UsernamePasswordAuthenticationToken
-                            authenticationToken = new UsernamePasswordAuthenticationToken(
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                             usuario,
                             null,
                             usuario.getAuthorities()
                     );
 
                     authenticationToken.setDetails(new WebAuthenticationDetails(request));
-
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-
                 }
-
-
             }
         } catch (JwtException ex) {
             resolver.resolveException(request, response, null, ex);
+            return;
         }
 
-
         filterChain.doFilter(request, response);
-
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return Arrays.stream(PUBLIC_URLS)
+                .anyMatch(publicUrl -> {
+                    if (publicUrl.endsWith("/**")) {
+                        return path.startsWith(publicUrl.substring(0, publicUrl.length() - 2));
+                    }
+                    return path.equals(publicUrl);
+                });
+    }
+
 
     private String getJwtAccessTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(JwtService.TOKEN_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JwtService.TOKEN_PREFIX)) {
             return bearerToken.substring(JwtService.TOKEN_PREFIX.length());
         }
-
         return null;
     }
 }
