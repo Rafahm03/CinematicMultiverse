@@ -35,7 +35,7 @@ public class PeliculaService {
 
     @Transactional
     public GetPeliculaDto getPeliculaDtoByTitulo(String titulo) {
-        Pelicula pelicula = peliculaRepository.findByTitulo(titulo)
+        Pelicula pelicula = peliculaRepository.findByTituloContainingIgnoreCase(titulo)
                 .orElseThrow(() -> new PeliculaNotFoundException("Película no encontrada"));
 
         Set<String> generos = pelicula.getGeneros().stream()
