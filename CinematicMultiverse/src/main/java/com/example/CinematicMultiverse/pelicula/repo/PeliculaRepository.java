@@ -13,6 +13,7 @@ import java.util.UUID;
 
 public interface PeliculaRepository extends JpaRepository<Pelicula, UUID>, JpaSpecificationExecutor<Pelicula> {
     Optional<Pelicula> findByTitulo(String titulo);
+    Optional<Pelicula> findByTituloContainingIgnoreCase(String titulo);
     Optional<Pelicula> findById(UUID peliculaId);
     Page<Pelicula> findAll(Pageable pageable);
 }

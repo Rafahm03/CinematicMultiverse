@@ -37,15 +37,28 @@ export default function Home() {
 
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentSearchQuery, setCurrentSearchQuery] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
 
-    const apiUrl = `http://localhost:8080/pelicula/?page=${currentPage}&size=10`;
+    const baseUrl = `http://localhost:8080/pelicula/`;
 
     useEffect(() => {
-        const fetchPeliculas = async () => {
-            try {
-                setLoading(true);
-                setError(null);
+        const loadPeliculas = async () => {
+            setLoading(true);
+            setError(null);
 
+            let apiUrl = '';
+            const isSearchingNow = currentSearchQuery.trim() !== "";
+            setIsSearching(isSearchingNow);
+
+            if (isSearchingNow) {
+                apiUrl = `${baseUrl}buscar?search=titulo:${encodeURIComponent(currentSearchQuery)},`;
+            } else {
+                apiUrl = `${baseUrl}?page=${currentPage}&size=10`;
+            }
+
+            try {
                 const res = await fetch(apiUrl, {
                     method: 'GET',
                     headers: {
@@ -55,32 +68,50 @@ export default function Home() {
                 });
 
                 if (!res.ok) {
-                    throw new Error(`Error del servidor: ${res.status} - ${res.statusText}`);
-                }
-
-                const data: ApiResponse = await res.json();
-
-                if (!data.content || data.content.length === 0) {
-                    if (currentPage > 0 && data.totalElements === 0) {
-                        setCurrentPage(0);
-                        return;
+                    if (res.status === 404 && isSearchingNow) {
+                        setPeliculas([]);
+                        setTotalPages(0);
+                    } else {
+                        throw new Error(`Error del servidor: ${res.status} - ${res.statusText}`);
                     }
-                    if (data.content.length === 0 && currentPage >= data.totalPages) {
-                        setCurrentPage(Math.max(0, data.totalPages - 1)); // Si la página actual excede el total, ir a la última página válida
-                        return;
+                } else {
+                    const data = await res.json();
+
+                    let fetchedContent: Pelicula[] = [];
+                    let totalPagesFromApi = 0;
+
+                    if (isSearchingNow) {
+                        if (Array.isArray(data)) {
+                            fetchedContent = data as Pelicula[];
+                            totalPagesFromApi = fetchedContent.length > 0 ? 1 : 0; // Para búsqueda, solo hay una "página" de resultados
+                        } else {
+                            throw new Error("Formato de respuesta de búsqueda inesperado.");
+                        }
+                    } else {
+                        if (data && typeof data === 'object' && 'content' in data && 'totalPages' in data) {
+                            const paginatedData = data as ApiResponse;
+                            fetchedContent = paginatedData.content || [];
+                            totalPagesFromApi = paginatedData.totalPages || 0;
+
+                            if (fetchedContent.length === 0 && paginatedData.totalElements > 0 && currentPage >= paginatedData.totalPages) {
+                                setCurrentPage(Math.max(0, paginatedData.totalPages - 1));
+                                return;
+                            }
+                        } else {
+                            throw new Error("Formato de respuesta de paginación inesperado.");
+                        }
                     }
-                    throw new Error("No se encontraron películas");
+
+                    const peliculasConImagen = fetchedContent.map(peli => ({
+                        ...peli,
+                        imagen: peli.imagen && peli.imagen.trim() !== '' ? peli.imagen : 'https://placehold.co/300x450/000000/FFFFFF?text=No+Image'
+                    }));
+
+                    setPeliculas(peliculasConImagen);
+                    setTotalPages(totalPagesFromApi);
                 }
-
-                const peliculasConImagen = data.content.map(peli => ({
-                    ...peli,
-                    imagen: peli.imagen && peli.imagen.trim() !== '' ? peli.imagen : 'https://placehold.co/300x450/000000/FFFFFF?text=No+Image'
-                }));
-
-                setPeliculas(peliculasConImagen);
-                setTotalPages(data.totalPages);
-
             } catch (err: any) {
+                console.error("Error cargando películas:", err);
                 if (err instanceof TypeError && err.message.includes("fetch")) {
                     setError("No se pudo conectar con el servidor. ¿Está el backend activo?");
                 } else {
@@ -91,28 +122,19 @@ export default function Home() {
             }
         };
 
-        fetchPeliculas();
-    }, [apiUrl, currentPage]);
-
-    const prevSlide = () => {
-        setActiveIndex((prev) => (prev === 0 ? carouselImages.length - 1 : prev + 1));
-    };
-
-    const nextSlide = () => {
-        setActiveIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1));
-    };
+        loadPeliculas();
+    }, [currentPage, currentSearchQuery, baseUrl]);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            nextSlide();
+            setActiveIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1));
         }, 5000);
         return () => clearInterval(interval);
-    }, [nextSlide]);
+    }, [carouselImages.length]);
 
     const goToPage = (page: number) => {
         if (page >= 0 && page < totalPages && page !== currentPage) {
             setCurrentPage(page);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
@@ -122,6 +144,31 @@ export default function Home() {
 
     const goToNextPage = () => {
         goToPage(currentPage + 1);
+    };
+
+    // Manejo del input de búsqueda
+    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleSearchSubmit = () => {
+        if (searchTerm !== currentSearchQuery) {
+            setCurrentSearchQuery(searchTerm);
+            if (currentPage !== 0) {
+                setCurrentPage(0);
+            }
+        } else if (searchTerm.trim() === "" && currentSearchQuery.trim() !== "") {
+            setCurrentSearchQuery("");
+            if (currentPage !== 0) {
+                setCurrentPage(0);
+            }
+        }
+    };
+
+    const handleKeyDownInSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            handleSearchSubmit();
+        }
     };
 
     if (loading) {
@@ -145,84 +192,91 @@ export default function Home() {
     return (
         <div className="app-container">
             <header className="header">
-                <div className="logo text-white text-3xl text-center py-4">CinematicMultiverse</div>
+                <div className="logo">CinematicMultiverse</div>
             </header>
 
             <main className="main-content">
-                {/* Carrusel */}
-                <div className="flex justify-center mt-6">
-                    <div className="relative w-[600px] h-[400px] rounded-lg overflow-hidden shadow-lg bg-black">
+                <div className="carousel-container">
+                    <div className="carousel-image-wrapper">
                         <img
                             src={carouselImages[activeIndex].src}
                             alt={carouselImages[activeIndex].alt}
-                            className="w-full h-full object-cover transition duration-700 ease-in-out"
+                            className="carousel-image"
                         />
                     </div>
                 </div>
 
-                <h2 className="section-title text-white text-2xl text-center mb-4 mt-8">Películas destacadas</h2>
-
-                {}
-                <div
-                    className="movie-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 mb-20">
-                    {peliculas.map(peli => (
-                        <article key={peli.id} className="movie-card bg-gray-900 p-2 rounded-lg shadow-lg">
-                            <img
-                                src={peli.imagen}
-                                alt={`Portada de ${peli.titulo}`}
-                                className="w-full h-[400px] object-cover rounded-md"
-                            />
-                            <div className="movie-info mt-2 text-white">
-                                <h3 className="text-lg font-semibold truncate">{peli.titulo}</h3>
-                                <div className="movie-stats flex justify-between text-sm text-gray-400 mt-1">
-                                    <span>⭐ {peli.puntuacion.toFixed(1)}</span>
-                                    <span>🎬 {peli.anio}</span>
-                                </div>
-                            </div>
-                        </article>
-                    ))}
+                <div className="search-bar-container">
+                    <input
+                        type="text"
+                        placeholder="Buscar películas por título..."
+                        value={searchTerm}
+                        onChange={handleSearchInputChange}
+                        onKeyDown={handleKeyDownInSearch}
+                        className="search-input"
+                    />
+                    <button
+                        onClick={handleSearchSubmit}
+                        className="search-button"
+                    >
+                        Buscar
+                    </button>
                 </div>
 
+                <h2 className="section-title">
+                    {isSearching ? "Resultados de la búsqueda" : "Películas destacadas"}
+                </h2>
 
-                {}
-                {totalPages > 1 && (
-                    <div className="flex justify-center items-center space-x-2 mt-16 mb-8"> {}
+                <div className="movie-grid">
+                    {peliculas.length > 0 ? (
+                        peliculas.map(peli => (
+                            <article key={peli.id} className="movie-card">
+                                <img
+                                    src={peli.imagen}
+                                    alt={`Portada de ${peli.titulo}`}
+                                    className="movie-card-image"
+                                />
+                                <div className="movie-info">
+                                    <h3 className="movie-title">{peli.titulo}</h3>
+                                    <div className="movie-stats">
+                                        <span>⭐ {peli.puntuacion.toFixed(1)}</span>
+                                        <span>🎬 {peli.anio}</span>
+                                    </div>
+                                </div>
+                            </article>
+                        ))
+                    ) : (
+                        <div className="no-movies-message">
+                            {isSearching && currentSearchQuery.trim() !== "" ? "No se encontraron películas con ese título." : "No hay películas disponibles."}
+                        </div>
+                    )}
+                </div>
+
+                {!isSearching && totalPages > 1 && (
+                    <div className="pagination-container">
                         <button
                             onClick={goToPrevPage}
                             disabled={currentPage === 0 || loading}
-                            className={`px-4 py-2 rounded-lg transition-all duration-300 font-semibold text-lg
-                                ${currentPage === 0 || loading
-                                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                : 'bg-red-700 hover:bg-red-800 text-white shadow-md'
-                            }`}
+                            className={`pagination-button prev-next ${currentPage === 0 || loading ? 'disabled' : ''}`}
                         >
                             Anterior
                         </button>
 
-                        {}
                         {Array.from({ length: totalPages }, (_, i) => (
                             <button
                                 key={i}
                                 onClick={() => goToPage(i)}
                                 disabled={loading}
-                                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 font-bold text-lg
-                                    ${i === currentPage
-                                    ? 'bg-red-600 text-white shadow-lg border-2 border-white' 
-                                    : 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700'
-                                }`}
+                                className={`pagination-button page-number ${i === currentPage ? 'active' : ''}`}
                             >
-                                {i + 1} {}
+                                {i + 1}
                             </button>
                         ))}
 
                         <button
                             onClick={goToNextPage}
                             disabled={currentPage === totalPages - 1 || loading}
-                            className={`px-4 py-2 rounded-lg transition-all duration-300 font-semibold text-lg
-                                ${currentPage === totalPages - 1 || loading
-                                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                : 'bg-red-700 hover:bg-red-800 text-white shadow-md'
-                            }`}
+                            className={`pagination-button prev-next ${currentPage === totalPages - 1 || loading ? 'disabled' : ''}`}
                         >
                             Siguiente
                         </button>
@@ -230,7 +284,7 @@ export default function Home() {
                 )}
             </main>
 
-            <footer className="footer mt-10 text-center text-gray-400 text-sm py-6">
+            <footer className="footer">
                 CinematicMultiverse<br/>
                 Tu portal para descubrir un multiverso de películas.<br/>
                 &copy; {new Date().getFullYear()} CinematicMultiverse Inc.
