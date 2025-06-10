@@ -1,6 +1,9 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import styles from './page.module.css'
 
 type Pelicula = {
     id: string;
@@ -34,103 +37,139 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeIndex, setActiveIndex] = useState(0);
-
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
-    const [currentSearchQuery, setCurrentSearchQuery] = useState("");
+    const [activeSearchTerm, setActiveSearchTerm] = useState("");
     const [isSearching, setIsSearching] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const searchInputRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
 
     const baseUrl = `http://localhost:8080/pelicula/`;
 
     useEffect(() => {
-        const loadPeliculas = async () => {
-            setLoading(true);
-            setError(null);
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('accessToken');
+            setIsLoggedIn(!!token);
+        }
+    }, []);
 
-            let apiUrl = '';
-            const isSearchingNow = currentSearchQuery.trim() !== "";
-            setIsSearching(isSearchingNow);
+    const handleLogout = () => {
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('accessToken');
+            setIsLoggedIn(false);
+            router.push('/');
+        }
+    };
 
-            if (isSearchingNow) {
-                apiUrl = `${baseUrl}buscar?search=titulo:${encodeURIComponent(currentSearchQuery)},`;
+    const fetchPeliculas = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        let currentApiUrl: string;
+        let fetchedPeliculas: Pelicula[] = [];
+        let totalPagesFetched = 0;
+
+        const searching = activeSearchTerm.trim() !== "";
+        setIsSearching(searching);
+
+        if (searching) {
+            currentApiUrl = `${baseUrl}buscar?search=titulo:${encodeURIComponent(activeSearchTerm)},`;
+        } else {
+            currentApiUrl = `${baseUrl}?page=${currentPage}&size=10`;
+        }
+
+        try {
+            const res = await fetch(currentApiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+
+            if (!res.ok) {
+                if (res.status === 404 && searching) {
+                    fetchedPeliculas = [];
+                    totalPagesFetched = 0;
+                } else {
+                    throw new Error(`Error del servidor: ${res.status} - ${res.statusText}`);
+                }
             } else {
-                apiUrl = `${baseUrl}?page=${currentPage}&size=10`;
-            }
+                const data = await res.json();
 
-            try {
-                const res = await fetch(apiUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                });
-
-                if (!res.ok) {
-                    if (res.status === 404 && isSearchingNow) {
-                        setPeliculas([]);
-                        setTotalPages(0);
+                if (searching) {
+                    if (Array.isArray(data)) {
+                        fetchedPeliculas = data as Pelicula[];
+                        totalPagesFetched = fetchedPeliculas.length > 0 ? 1 : 0;
                     } else {
-                        throw new Error(`Error del servidor: ${res.status} - ${res.statusText}`);
+                        throw new Error("Formato de respuesta de búsqueda inesperado. Se esperaba un array de películas.");
                     }
                 } else {
-                    const data = await res.json();
+                    if (data && typeof data === 'object' && 'content' in data && 'totalPages' in data) {
+                        const paginatedData = data as ApiResponse;
+                        fetchedPeliculas = paginatedData.content || [];
+                        totalPagesFetched = paginatedData.totalPages || 0;
 
-                    let fetchedContent: Pelicula[] = [];
-                    let totalPagesFromApi = 0;
-
-                    if (isSearchingNow) {
-                        if (Array.isArray(data)) {
-                            fetchedContent = data as Pelicula[];
-                            totalPagesFromApi = fetchedContent.length > 0 ? 1 : 0; // Para búsqueda, solo hay una "página" de resultados
-                        } else {
-                            throw new Error("Formato de respuesta de búsqueda inesperado.");
+                        if (fetchedPeliculas.length === 0 && paginatedData.totalElements > 0 && currentPage >= paginatedData.totalPages) {
+                            setCurrentPage(Math.max(0, paginatedData.totalPages - 1));
+                            return;
                         }
                     } else {
-                        if (data && typeof data === 'object' && 'content' in data && 'totalPages' in data) {
-                            const paginatedData = data as ApiResponse;
-                            fetchedContent = paginatedData.content || [];
-                            totalPagesFromApi = paginatedData.totalPages || 0;
-
-                            if (fetchedContent.length === 0 && paginatedData.totalElements > 0 && currentPage >= paginatedData.totalPages) {
-                                setCurrentPage(Math.max(0, paginatedData.totalPages - 1));
-                                return;
-                            }
-                        } else {
-                            throw new Error("Formato de respuesta de paginación inesperado.");
-                        }
+                        throw new Error("Formato de respuesta de paginación inesperado. Se esperaba un objeto con 'content' y 'totalPages'.");
                     }
-
-                    const peliculasConImagen = fetchedContent.map(peli => ({
-                        ...peli,
-                        imagen: peli.imagen && peli.imagen.trim() !== '' ? peli.imagen : 'https://placehold.co/300x450/000000/FFFFFF?text=No+Image'
-                    }));
-
-                    setPeliculas(peliculasConImagen);
-                    setTotalPages(totalPagesFromApi);
                 }
-            } catch (err: any) {
-                console.error("Error cargando películas:", err);
-                if (err instanceof TypeError && err.message.includes("fetch")) {
-                    setError("No se pudo conectar con el servidor. ¿Está el backend activo?");
-                } else {
-                    setError(err.message || "Error desconocido");
+
+                if (fetchedPeliculas.length === 0 && !searching) {
+                    if (data && 'totalElements' in data && data.totalElements === 0 && currentPage === 0) {
+                    }
+                    if (currentPage > 0 && totalPagesFetched > 0 && currentPage >= totalPagesFetched) {
+                        setCurrentPage(Math.max(0, totalPagesFetched - 1));
+                        return;
+                    }
                 }
-            } finally {
-                setLoading(false);
             }
-        };
 
-        loadPeliculas();
-    }, [currentPage, currentSearchQuery, baseUrl]);
+            const peliculasConImagen = fetchedPeliculas.map(peli => ({
+                ...peli,
+                imagen: peli.imagen && peli.imagen.trim() !== '' ? peli.imagen : 'https://placehold.co/300x450/000000/FFFFFF?text=No+Image'
+            }));
+
+            setPeliculas(peliculasConImagen);
+            setTotalPages(totalPagesFetched);
+
+        } catch (err: any) {
+            console.error("Error fetching movies:", err);
+            if (err instanceof TypeError && err.message.includes("fetch")) {
+                setError("No se pudo conectar con el servidor. ¿Está el backend activo?");
+            } else {
+                setError(err.message || "Error desconocido");
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [currentPage, activeSearchTerm, baseUrl]);
+
+    useEffect(() => {
+        fetchPeliculas();
+    }, [fetchPeliculas]);
+
+    const prevSlide = useCallback(() => {
+        setActiveIndex((prev) => (prev === 0 ? carouselImages.length - 1 : prev - 1));
+    }, []);
+
+    const nextSlide = useCallback(() => {
+        setActiveIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1));
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setActiveIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1));
+            nextSlide();
         }, 5000);
         return () => clearInterval(interval);
-    }, [carouselImages.length]);
+    }, [nextSlide]);
 
     const goToPage = (page: number) => {
         if (page >= 0 && page < totalPages && page !== currentPage) {
@@ -146,26 +185,26 @@ export default function Home() {
         goToPage(currentPage + 1);
     };
 
-    // Manejo del input de búsqueda
-    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
     const handleSearchSubmit = () => {
-        if (searchTerm !== currentSearchQuery) {
-            setCurrentSearchQuery(searchTerm);
+        if (searchTerm !== activeSearchTerm) {
+            setActiveSearchTerm(searchTerm);
             if (currentPage !== 0) {
                 setCurrentPage(0);
             }
-        } else if (searchTerm.trim() === "" && currentSearchQuery.trim() !== "") {
-            setCurrentSearchQuery("");
+        }
+        if (searchTerm.trim() === "" && activeSearchTerm.trim() !== "") {
+            setActiveSearchTerm("");
             if (currentPage !== 0) {
                 setCurrentPage(0);
             }
         }
     };
 
-    const handleKeyDownInSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             handleSearchSubmit();
         }
@@ -173,16 +212,16 @@ export default function Home() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f]">
-                <div className="text-white text-xl">Cargando películas...</div>
+            <div className={styles.appContainer}>
+                <div className={styles.centeredMessage}>Cargando películas...</div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f]">
-                <div className="text-red-500 text-xl text-center p-4 rounded-lg bg-gray-800 shadow-lg">
+            <div className={styles.appContainer}>
+                <div className={styles.centeredMessage}>
                     ⚠️ Error al cargar las películas:<br /> {error}
                 </div>
             </div>
@@ -190,74 +229,94 @@ export default function Home() {
     }
 
     return (
-        <div className="app-container">
-            <header className="header">
-                <div className="logo">CinematicMultiverse</div>
+        <div className={styles.appContainer}>
+            <header className={styles.header}>
+                <div className={styles.logo}>CinematicMultiverse</div>
+                <div className={styles.authLinksContainer}>
+                    {isLoggedIn ? (
+                        <button onClick={handleLogout} className={styles.logoutButton} title="Cerrar sesión">
+                            👋
+                        </button>
+                    ) : (
+                        <>
+                            <Link href="/login" className={styles.authLink}>Login</Link>
+                            <span className={styles.authSeparator}>|</span>
+                            <Link href="/register" className={styles.authLink}>Register</Link>
+                        </>
+                    )}
+                </div>
             </header>
 
-            <main className="main-content">
-                <div className="carousel-container">
-                    <div className="carousel-image-wrapper">
-                        <img
-                            src={carouselImages[activeIndex].src}
-                            alt={carouselImages[activeIndex].alt}
-                            className="carousel-image"
-                        />
-                    </div>
+            <main className={styles.mainContent}>
+                <div className={styles.carouselContainer}>
+                    <img
+                        src={carouselImages[activeIndex].src}
+                        alt={carouselImages[activeIndex].alt}
+                        className={styles.carouselImage}
+                    />
                 </div>
 
-                <div className="search-bar-container">
+                <div className={styles.searchBarContainer}>
                     <input
+                        ref={searchInputRef}
                         type="text"
                         placeholder="Buscar películas por título..."
                         value={searchTerm}
-                        onChange={handleSearchInputChange}
-                        onKeyDown={handleKeyDownInSearch}
-                        className="search-input"
+                        onChange={handleSearchChange}
+                        onKeyDown={handleKeyDown}
+                        className={styles.searchInput}
                     />
                     <button
                         onClick={handleSearchSubmit}
-                        className="search-button"
+                        className={styles.searchButton}
                     >
                         Buscar
                     </button>
                 </div>
 
-                <h2 className="section-title">
+                <h2 className={styles.sectionTitle}>
                     {isSearching ? "Resultados de la búsqueda" : "Películas destacadas"}
                 </h2>
 
-                <div className="movie-grid">
+                <div className={styles.movieGrid}>
                     {peliculas.length > 0 ? (
                         peliculas.map(peli => (
-                            <article key={peli.id} className="movie-card">
+                            <article key={peli.id} className={styles.movieCard}>
                                 <img
                                     src={peli.imagen}
                                     alt={`Portada de ${peli.titulo}`}
-                                    className="movie-card-image"
+                                    className={styles.movieCardImg}
                                 />
-                                <div className="movie-info">
-                                    <h3 className="movie-title">{peli.titulo}</h3>
-                                    <div className="movie-stats">
+                                <div className={styles.movieInfo}>
+                                    <h3>{peli.titulo}</h3>
+                                    <div className={styles.movieStats}>
                                         <span>⭐ {peli.puntuacion.toFixed(1)}</span>
                                         <span>🎬 {peli.anio}</span>
                                     </div>
                                 </div>
+                                <div className={styles.movieOverlay}>
+                                    <p className={styles.synopsis}>{peli.sinopsis}</p>
+                                    <p className={styles.details}>
+                                        Duración: {peli.duracion} min | Géneros: {peli.generos.join(', ')}
+                                    </p>
+                                </div>
                             </article>
                         ))
                     ) : (
-                        <div className="no-movies-message">
-                            {isSearching && currentSearchQuery.trim() !== "" ? "No se encontraron películas con ese título." : "No hay películas disponibles."}
+                        <div className={styles.centeredMessage}>
+                            {isSearching && activeSearchTerm.trim() !== ""
+                                ? "No se encontraron películas con ese título."
+                                : "No hay películas disponibles."}
                         </div>
                     )}
                 </div>
 
                 {!isSearching && totalPages > 1 && (
-                    <div className="pagination-container">
+                    <div className={styles.paginationContainer}>
                         <button
                             onClick={goToPrevPage}
                             disabled={currentPage === 0 || loading}
-                            className={`pagination-button prev-next ${currentPage === 0 || loading ? 'disabled' : ''}`}
+                            className={`${styles.paginationButton} ${styles.prevNext} ${currentPage === 0 || loading ? styles.disabled : ''}`}
                         >
                             Anterior
                         </button>
@@ -267,7 +326,7 @@ export default function Home() {
                                 key={i}
                                 onClick={() => goToPage(i)}
                                 disabled={loading}
-                                className={`pagination-button page-number ${i === currentPage ? 'active' : ''}`}
+                                className={`${styles.paginationButton} ${styles.pageNumber} ${i === currentPage ? styles.active : ''}`}
                             >
                                 {i + 1}
                             </button>
@@ -276,7 +335,7 @@ export default function Home() {
                         <button
                             onClick={goToNextPage}
                             disabled={currentPage === totalPages - 1 || loading}
-                            className={`pagination-button prev-next ${currentPage === totalPages - 1 || loading ? 'disabled' : ''}`}
+                            className={`${styles.paginationButton} ${styles.prevNext} ${currentPage === totalPages - 1 || loading ? styles.disabled : ''}`}
                         >
                             Siguiente
                         </button>
@@ -284,7 +343,7 @@ export default function Home() {
                 )}
             </main>
 
-            <footer className="footer">
+            <footer className={styles.footer}>
                 CinematicMultiverse<br/>
                 Tu portal para descubrir un multiverso de películas.<br/>
                 &copy; {new Date().getFullYear()} CinematicMultiverse Inc.
