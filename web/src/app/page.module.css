@@ -1,75 +1,8 @@
-/* app/page.module.css - Estilos específicos de la página principal */
 
 .appContainer {
     background-color: #0f0f0f;
     color: #fff;
     font-family: 'Segoe UI', sans-serif;
-}
-
-/* Encabezado */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background: linear-gradient(90deg, #facc15, #fbbf24, #f59e0b);
-    box-shadow: 0 2px 8px rgba(255, 204, 21, 0.8);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.logo {
-    font-weight: 900;
-    font-size: 1.5rem;
-    color: black;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    user-select: none;
-    cursor: default;
-}
-
-.authLinksContainer {
-    display: flex;
-    gap: 1.5rem;
-    font-size: 1.5rem;
-    color: black;
-    align-items: center;
-}
-
-.authLink,
-.authSeparator {
-    color: black;
-    font-size: 1.1rem;
-}
-
-.authLink:hover {
-    color: #dc2626;
-    text-decoration: underline;
-}
-
-.authSeparator {
-    color: #4a4a4a;
-}
-
-.logoutButton {
-    background: none;
-    border: none;
-    color: black;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: color 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.logoutButton:hover {
-    color: #dc2626;
-    background-color: transparent;
 }
 
 /* Carrusel */
@@ -96,7 +29,6 @@
     filter: brightness(0.8);
 }
 
-/* Contenido Principal */
 .mainContent {
     flex-grow: 1;
     display: flex;
@@ -115,7 +47,6 @@
     margin-top: 3rem;
 }
 
-/* Barra de Búsqueda */
 .searchBarContainer {
     display: flex;
     justify-content: center;
@@ -123,11 +54,7 @@
     gap: 0.5rem;
     margin-top: 2rem;
     margin-bottom: 1.5rem;
-    position: sticky;
-    top: 1rem;
-    z-index: 10;
-    background-color: #0f0f0f;
-    padding: 0.5rem 0;
+    background-color: transparent;
 }
 
 .searchInput {
@@ -180,7 +107,6 @@
     box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.5);
 }
 
-/* Rejilla de Películas */
 .movieGrid {
     display: grid;
     gap: 1.5rem;
@@ -259,7 +185,6 @@
     font-size: 0.8rem;
 }
 
-/* Paginación */
 .paginationContainer {
     display: flex;
     gap: 0.5rem;
@@ -293,7 +218,6 @@
     cursor: not-allowed;
 }
 
-/* Mensaje centrado */
 .centeredMessage {
     text-align: center;
     font-size: 1.2rem;
@@ -301,7 +225,6 @@
     color: #aaa;
 }
 
-/* Footer */
 .footer {
     text-align: center;
     padding: 2rem;

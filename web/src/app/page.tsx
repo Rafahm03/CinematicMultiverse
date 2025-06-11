@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import styles from './page.module.css'
+import styles from './page.module.css';
+import Header from './components/Header/Header';
+import Link from 'next/link';
 
 type Pelicula = {
     id: string;
@@ -42,27 +43,11 @@ export default function Home() {
     const [searchTerm, setSearchTerm] = useState("");
     const [activeSearchTerm, setActiveSearchTerm] = useState("");
     const [isSearching, setIsSearching] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
     const baseUrl = `http://localhost:8080/pelicula/`;
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const token = localStorage.getItem('accessToken');
-            setIsLoggedIn(!!token);
-        }
-    }, []);
-
-    const handleLogout = () => {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('accessToken');
-            setIsLoggedIn(false);
-            router.push('/');
-        }
-    };
 
     const fetchPeliculas = useCallback(async () => {
         setLoading(true);
@@ -124,6 +109,7 @@ export default function Home() {
 
                 if (fetchedPeliculas.length === 0 && !searching) {
                     if (data && 'totalElements' in data && data.totalElements === 0 && currentPage === 0) {
+
                     }
                     if (currentPage > 0 && totalPagesFetched > 0 && currentPage >= totalPagesFetched) {
                         setCurrentPage(Math.max(0, totalPagesFetched - 1));
@@ -185,6 +171,7 @@ export default function Home() {
         goToPage(currentPage + 1);
     };
 
+    // --- Lógica de Búsqueda ---
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
@@ -213,6 +200,7 @@ export default function Home() {
     if (loading) {
         return (
             <div className={styles.appContainer}>
+                <Header />
                 <div className={styles.centeredMessage}>Cargando películas...</div>
             </div>
         );
@@ -221,6 +209,7 @@ export default function Home() {
     if (error) {
         return (
             <div className={styles.appContainer}>
+                <Header />
                 <div className={styles.centeredMessage}>
                     ⚠️ Error al cargar las películas:<br /> {error}
                 </div>
@@ -230,22 +219,7 @@ export default function Home() {
 
     return (
         <div className={styles.appContainer}>
-            <header className={styles.header}>
-                <div className={styles.logo}>CinematicMultiverse</div>
-                <div className={styles.authLinksContainer}>
-                    {isLoggedIn ? (
-                        <button onClick={handleLogout} className={styles.logoutButton} title="Cerrar sesión">
-                            👋
-                        </button>
-                    ) : (
-                        <>
-                            <Link href="/login" className={styles.authLink}>Login</Link>
-                            <span className={styles.authSeparator}>|</span>
-                            <Link href="/registro" className={styles.authLink}>Registrarse</Link>
-                        </>
-                    )}
-                </div>
-            </header>
+            <Header />
 
             <main className={styles.mainContent}>
                 <div className={styles.carouselContainer}>
@@ -281,26 +255,29 @@ export default function Home() {
                 <div className={styles.movieGrid}>
                     {peliculas.length > 0 ? (
                         peliculas.map(peli => (
-                            <article key={peli.id} className={styles.movieCard}>
-                                <img
-                                    src={peli.imagen}
-                                    alt={`Portada de ${peli.titulo}`}
-                                    className={styles.movieCardImg}
-                                />
-                                <div className={styles.movieInfo}>
-                                    <h3>{peli.titulo}</h3>
-                                    <div className={styles.movieStats}>
-                                        <span>⭐ {peli.puntuacion.toFixed(1)}</span>
-                                        <span>🎬 {peli.anio}</span>
+                            <Link key={peli.id} href={`/peliculas/${peli.titulo}`}
+                                  className={styles.movieCardLink}>
+                                <article className={styles.movieCard}>
+                                    <img
+                                        src={peli.imagen}
+                                        alt={`Portada de ${peli.titulo}`}
+                                        className={styles.movieCardImg}
+                                    />
+                                    <div className={styles.movieInfo}>
+                                        <h3>{peli.titulo}</h3>
+                                        <div className={styles.movieStats}>
+                                            <span>⭐ {peli.puntuacion.toFixed(1)}</span>
+                                            <span>🎬 {peli.anio}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className={styles.movieOverlay}>
-                                    <p className={styles.synopsis}>{peli.sinopsis}</p>
-                                    <p className={styles.details}>
-                                        Duración: {peli.duracion} min | Géneros: {peli.generos.join(', ')}
-                                    </p>
-                                </div>
-                            </article>
+                                    <div className={styles.movieOverlay}>
+                                        <p className={styles.synopsis}>{peli.sinopsis}</p>
+                                        <p className={styles.details}>
+                                            Duración: {peli.duracion} min | Géneros: {peli.generos.join(', ')}
+                                        </p>
+                                    </div>
+                                </article>
+                            </Link>
                         ))
                     ) : (
                         <div className={styles.centeredMessage}>
@@ -321,7 +298,7 @@ export default function Home() {
                             Anterior
                         </button>
 
-                        {Array.from({ length: totalPages }, (_, i) => (
+                        {Array.from({length: totalPages}, (_, i) => (
                             <button
                                 key={i}
                                 onClick={() => goToPage(i)}

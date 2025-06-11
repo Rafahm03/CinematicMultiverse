@@ -115,8 +115,6 @@ public class PeliculaController {
                     description = "No se ha encontrado la película con el Titulo proporcionado",
                     content = @Content)
     })
-
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{titulo}")
     public GetPeliculaDto getPeliculaByTitulo(@PathVariable String titulo) {
         return peliculaService.getPeliculaDtoByTitulo(titulo);
