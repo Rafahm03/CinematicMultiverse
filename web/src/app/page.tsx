@@ -241,7 +241,7 @@ export default function Home() {
                         <>
                             <Link href="/login" className={styles.authLink}>Login</Link>
                             <span className={styles.authSeparator}>|</span>
-                            <Link href="/register" className={styles.authLink}>Register</Link>
+                            <Link href="/registro" className={styles.authLink}>Registrarse</Link>
                         </>
                     )}
                 </div>
