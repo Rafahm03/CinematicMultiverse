@@ -63,3 +63,26 @@
     color: #dc2626;
     background-color: transparent;
 }
+
+
+.favoritesLink {
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+.favoritesLink:hover {
+    color: #e50914;
+}
+
+.heartIcon {
+    width: 28px;
+    height: 28px;
+}
+
+.authLink, .logoutButton {
+    font-size: 1rem;
+    padding: 8px 12px;
+}

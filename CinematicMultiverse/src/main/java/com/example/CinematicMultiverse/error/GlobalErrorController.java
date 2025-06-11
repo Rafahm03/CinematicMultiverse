@@ -1,5 +1,6 @@
 package com.example.CinematicMultiverse.error;
 
+import com.example.CinematicMultiverse.favorito.error.PeliculaYaEnFavoritosException;
 import com.example.CinematicMultiverse.favorito.error.FavoritosVacioException;
 import com.example.CinematicMultiverse.resenhia.error.ReseniaNotFoundException;
 import com.example.CinematicMultiverse.resenhia.error.ReseniaYaExiste;
@@ -129,6 +130,16 @@ public class GlobalErrorController
                     .build();
         }
 
+    }
+
+    @ExceptionHandler(PeliculaYaEnFavoritosException.class)
+    public ProblemDetail handlePeliculaYaEnFavoritos(PeliculaYaEnFavoritosException ex) {
+        ProblemDetail result = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        result.setTitle("Película ya en favoritos");
+        result.setType(URI.create("https://www.salesianos-triana.edu/errors/movie-already-favorite")); // URL de error personalizada
+        result.setProperty("author", "Rafa");
+
+        return result;
     }
 
     @ExceptionHandler(FavoritosVacioException.class)
