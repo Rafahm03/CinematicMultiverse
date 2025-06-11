@@ -21,6 +21,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
