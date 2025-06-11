@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
@@ -23,8 +22,11 @@ export default function MovieDetailPage() {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [favoriteMessage, setFavoriteMessage] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
     const baseUrl = `http://localhost:8080/pelicula/`;
+    const favoritesUrl = `http://localhost:8080/favoritos/add`;
+
     const fetchMovieDetails = useCallback(async () => {
         if (!encodedTitulo) {
             setLoading(false);
@@ -34,6 +36,7 @@ export default function MovieDetailPage() {
 
         setLoading(true);
         setError(null);
+        setFavoriteMessage(null);
 
         const decodedTitulo = decodeURIComponent(encodedTitulo as string);
 
@@ -84,6 +87,62 @@ export default function MovieDetailPage() {
         fetchMovieDetails();
     }, [fetchMovieDetails]);
 
+    const handleAddToFavorites = async () => {
+        console.log("handleAddToFavorites: Función llamada.");
+
+        if (!pelicula) {
+            console.log("handleAddToFavorites: Película no cargada, saliendo.");
+            return;
+        }
+
+        console.log("handleAddToFavorites: Película disponible:", pelicula.titulo);
+
+        const token = localStorage.getItem('accessToken');
+
+        console.log("handleAddToFavorites: Token obtenido de localStorage:", token);
+
+        if (!token) {
+            setFavoriteMessage({ message: 'Debes iniciar sesión para añadir a favoritos.', type: 'error' });
+            setTimeout(() => setFavoriteMessage(null), 3000);
+            console.log("handleAddToFavorites: No hay token, saliendo.");
+            return;
+        }
+
+        console.log("handleAddToFavorites: Token presente, intentando añadir a favoritos...");
+
+        try {
+            const res = await fetch(favoritesUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ titulo: pelicula.titulo }),
+            });
+
+            console.log("handleAddToFavorites: Petición fetch completada. Estado de respuesta:", res.status);
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                if (errorData.detail && errorData.detail.includes("ya está en tu lista de favoritos")) {
+                    setFavoriteMessage({ message: `"${pelicula.titulo}" ya está en tus favoritos.`, type: 'error' });
+                } else {
+                    throw new Error(errorData.detail || errorData.message || 'Error al añadir a favoritos');
+                }
+            } else {
+                setFavoriteMessage({ message: `"${pelicula.titulo}" añadida a tus favoritos.`, type: 'success' });
+            }
+
+            setTimeout(() => setFavoriteMessage(null), 3000);
+
+        } catch (err: any) {
+            console.error("handleAddToFavorites: Error adding to favorites:", err);
+            setFavoriteMessage({ message: err.message || 'Error desconocido al añadir a favoritos.', type: 'error' });
+            setTimeout(() => setFavoriteMessage(null), 3000);
+        }
+    };
+
+
     const formatDuration = (minutes: number) => {
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
@@ -126,9 +185,22 @@ export default function MovieDetailPage() {
             <Header />
 
             <main className={styles.mainContent}>
+                {favoriteMessage && (
+                    <div className={`${styles.feedbackMessage} ${favoriteMessage.type === 'success' ? styles.success : styles.error}`}>
+                        {favoriteMessage.message}
+                    </div>
+                )}
+
                 <section className={styles.movieDetailHeader}>
                     <div className={styles.moviePosterContainer}>
                         <img src={pelicula.imagen} alt={`Poster de ${pelicula.titulo}`} className={styles.moviePoster} />
+                        <button
+                            onClick={handleAddToFavorites}
+                            className={styles.addToFavoritesButton}
+                            aria-label={`Añadir "${pelicula.titulo}" a favoritos`}
+                        >
+                            ❤️
+                        </button>
                     </div>
                     <div className={styles.movieInfoBlock}>
                         <div className={styles.titleRatingContainer}>
@@ -153,8 +225,13 @@ export default function MovieDetailPage() {
                         </div>
                     </div>
                 </section>
-
             </main>
+
+            <footer className={styles.footer}>
+                CinematicMultiverse<br/>
+                Tu portal para descubrir un multiverso de películas.<br/>
+                &copy; {new Date().getFullYear()} CinematicMultiverse Inc.
+            </footer>
         </div>
     );
 }

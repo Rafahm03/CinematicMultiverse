@@ -6,9 +6,15 @@
     font-family: 'Segoe UI', sans-serif;
     display: flex;
     flex-direction: column;
-
 }
 
+.mainContent {
+    flex-grow: 1;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
 
 .movieDetailHeader {
     display: flex;
@@ -24,18 +30,23 @@
 .moviePosterContainer {
     flex-shrink: 0;
     width: 300px;
-    height: 450px;
     position: relative;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #1a1a1a;
     border-radius: 1rem;
 }
 
 .moviePoster {
     width: 100%;
-    height: 100%;
+    height: 450px;
     object-fit: cover;
     display: block;
+    border-radius: 1rem;
 }
+
 
 .movieInfoBlock {
     flex-grow: 1;
@@ -126,17 +137,68 @@
     color: #ff4d4d;
 }
 
+.addToFavoritesButton {
+    background: none;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 20px;
+    width: 30%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.addToFavoritesButton:hover {
+    transform: translateY(-2px);
+}
+
+.addToFavoritesButton:active {
+    transform: translateY(0);
+}
+
+.feedbackMessage {
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    max-width: 800px;
+}
+
+.feedbackMessage.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.feedbackMessage.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
+
+.moviePosterContainer {
+    margin-right: 40px;
+    flex-shrink: 0;
+}
 
 @media (max-width: 900px) {
     .movieDetailHeader {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        margin: 1.5rem;
     }
     .moviePosterContainer {
         width: 250px;
-        height: 375px;
         margin-bottom: 1.5rem;
+        margin-right: 0;
     }
     .movieInfoBlock {
         padding: 1.5rem;
@@ -165,7 +227,6 @@
     }
     .moviePosterContainer {
         width: 200px;
-        height: 300px;
     }
     .movieTitle {
         font-size: 1.8rem;
@@ -182,4 +243,14 @@
     .reviewContent {
         font-size: 0.9rem;
     }
+}
+
+
+.footer {
+    background-color: #0f0f0f;
+    color: #888;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    font-size: 0.9rem;
 }
