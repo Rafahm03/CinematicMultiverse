@@ -16,8 +16,7 @@ body,
     font-size: 18px;
     background-color: #0f0f0f;
     color: #e5e5e5;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 a {
