@@ -12,7 +12,8 @@ public record GetReseniaDto(
         double puntuacion,
         String comentario,
         LocalDateTime fechaPublicacion,
-        boolean isEdit
+        boolean isEdit,
+        UUID userId
 ) {
     public static GetReseniaDto of(Resenia resenia) {
         return new GetReseniaDto(
@@ -22,7 +23,8 @@ public record GetReseniaDto(
                 resenia.getPuntuacion(),
                 resenia.getComentario(),
                 resenia.getFechaPublicacion(),
-                resenia.isEdit()
+                resenia.isEdit(),
+                resenia.getUsuario().getId()
         );
     }
 }
