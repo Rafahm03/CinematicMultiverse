@@ -137,7 +137,7 @@ public class UsuarioController {
     @Operation(summary = "Edita el perfil del usuario logueado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Perfil editado exitosamente",
+                    description = "Page editado exitosamente",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Usuario.class))}),
             @ApiResponse(responseCode = "404",

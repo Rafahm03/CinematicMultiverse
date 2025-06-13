@@ -8,6 +8,8 @@ import java.util.UUID;
 public record UserResponse(
         UUID id,
         String username,
+        String nombre,
+        String email,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String token,
         @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -16,11 +18,24 @@ public record UserResponse(
 ) {
 
     public static UserResponse of (Usuario usuario) {
-        return new UserResponse(usuario.getId(), usuario.getUsername(), null, null);
+        return new UserResponse(
+                usuario.getId(),
+                usuario.getUsername(),
+                usuario.getNombre(),
+                usuario.getEmail(),
+                null,
+                null
+        );
     }
 
     public static UserResponse of (Usuario usuario, String token, String refreshToken) {
-        return new UserResponse(usuario.getId(), usuario.getUsername(), token, refreshToken);
+        return new UserResponse(
+                usuario.getId(),
+                usuario.getUsername(),
+                usuario.getNombre(),
+                usuario.getEmail(),
+                token,
+                refreshToken
+        );
     }
-
 }

@@ -1,3 +1,4 @@
+/* Header.module.css */
 
 .header {
     display: flex;
@@ -62,27 +63,45 @@
 .logoutButton:hover {
     color: #dc2626;
     background-color: transparent;
+    animation: wave 1s ease-in-out;
 }
 
 
-.favoritesLink {
+.profileLink, .favoritesLink {
     margin-right: 15px;
     display: flex;
     align-items: center;
-    color: white;
+    color: black;
     transition: color 0.3s ease;
 }
 
-.favoritesLink:hover {
+.profileLink:hover, .favoritesLink:hover {
     color: #e50914;
 }
 
-.heartIcon {
+.profileIcon, .heartIcon {
     width: 28px;
     height: 28px;
+    vertical-align: middle;
 }
 
 .authLink, .logoutButton {
     font-size: 1rem;
     padding: 8px 12px;
+}
+
+
+@keyframes wave {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(10deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(10deg); }
+    40% { transform: rotate(-8deg); }
+    50% { transform: rotate(10deg); }
+    60% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.profileLink:hover .profileIcon {
+    transform-origin: 70% 70%;
 }
