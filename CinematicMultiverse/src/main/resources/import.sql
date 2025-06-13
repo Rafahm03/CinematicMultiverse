@@ -256,9 +256,9 @@ SELECT id, 'ACCION' FROM pelicula WHERE titulo = 'Inception'
 UNION ALL
 SELECT id, 'CIENCIA_FICCION' FROM pelicula WHERE titulo = 'Inception'
 UNION ALL
-SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'El Silencio de los Inocentes'
+SELECT id, 'DRAMA' FROM pelicula WHERE titulo = 'El Silencio de los corderos'
 UNION ALL
-SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Silencio de los Inocentes'
+SELECT id, 'CRIMEN' FROM pelicula WHERE titulo = 'El Silencio de los corderos'
 UNION ALL
 SELECT id, 'ANIMACION' FROM pelicula WHERE titulo = 'Los Increíbles'
 UNION ALL
@@ -395,4 +395,4 @@ VALUES
     ('dd5fa52f-2086-4426-a3f1-ed60a6fb5e4d', (SELECT id FROM pelicula WHERE titulo = 'Titanic'),   (SELECT id FROM user_entity WHERE username = 'CarlosGomez92'), 'Titanic es una película que combina romance y tragedia de manera impecable. A pesar de ser una historia conocida, siempre conmueve.', '2024-02-22', 8, false),  -- Titanic
     ('303d7bf5-fb6b-40e3-bb56-0cbeb1811674', (SELECT id FROM pelicula WHERE titulo = 'El Señor de los Anillos: El Retorno del Rey'),  (SELECT id FROM user_entity WHERE username = 'LauraMartinez'), 'El Señor de los Anillos: El Retorno del Rey es el cierre perfecto para una saga épica. Con batallas impresionantes y personajes que has llegado a querer, es una obra maestra de la fantasía.', '2024-02-25', 10, false),  -- El Señor de los Anillos: El Retorno del Rey
     ('f6d91908-902d-47e2-9a6c-52b7a62bfe3a', (SELECT id FROM pelicula WHERE titulo = 'Inception'), (SELECT id FROM user_entity WHERE username = 'AndresLopez'), 'Una trama que te hace cuestionar la realidad, muy bien hecha.', '2024-03-25', 9, false),
-    ('ddc53a94-c471-4ea1-8a1c-829c727baf45', (SELECT id FROM pelicula WHERE titulo = 'El Silencio de los Inocentes'),  (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'Un thriller psicológico increíble, con una actuación sobresaliente.', '2024-03-28', 9, false);
+    ('ddc53a94-c471-4ea1-8a1c-829c727baf45', (SELECT id FROM pelicula WHERE titulo = 'El Silencio de los corderos'),  (SELECT id FROM user_entity WHERE username = 'SoyAdmin'), 'Un thriller psicológico increíble, con una actuación sobresaliente.', '2024-03-28', 9, false);

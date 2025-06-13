@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public record GetUsuarioDto (
         UUID id,
-        String password,
+        String username,
         String nombre,
         String email,
         String role
@@ -18,7 +18,7 @@ public record GetUsuarioDto (
         return new GetUsuarioDto(
                 u.getId(),
                 u.getUsername(),
-                u.getPassword(),
+                u.getNombre(),
                 u.getEmail(),
                 u.getRoles().stream()
                         .map(Enum::name)
