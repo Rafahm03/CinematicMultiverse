@@ -1,27 +1,75 @@
 // Header.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './Header.module.css';
+import { userHasRole } from '../../../../utils/jwt'; // Ajusta la ruta si es necesario
 
 export default function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
 
-    useEffect(() => {
+    // Función para verificar y actualizar el estado de autenticación
+    const checkAuthStatus = useCallback(() => {
         if (typeof window !== 'undefined') {
+            // *** IMPORTANTE: Asegúrate de que esta clave coincide con la que usas al guardar el token en localStorage ***
+            // Si tu login guarda como 'jwtToken', cambia 'accessToken' a 'jwtToken' aquí.
             const token = localStorage.getItem('accessToken');
+
+            console.log('Header: Token leído de localStorage:', token ? 'Token presente' : 'Token ausente');
+
             setIsLoggedIn(!!token);
+            if (token) {
+                const adminStatus = userHasRole(token, 'ADMIN'); // 'ADMIN' debe coincidir EXACTAMENTE con el rol en tu JWT
+                console.log('Header: ¿Es administrador?', adminStatus);
+                setIsAdmin(adminStatus);
+            } else {
+                setIsAdmin(false);
+            }
         }
     }, []);
+
+    useEffect(() => {
+        // Verificación inicial cuando el componente se monta
+        checkAuthStatus();
+
+        // Escucha eventos 'storage' (ej., cuando otra pestaña inicia/cierra sesión)
+        const handleStorageChange = () => {
+            console.log('Header: Evento de storage detectado. Re-verificando autenticación.');
+            checkAuthStatus();
+        };
+
+        // Escucha el evento 'focus' de la ventana (cuando la pestaña del navegador recupera el foco)
+        // Esto ayuda a re-sincronizar el estado si el usuario cambia de pestaña o vuelve a la aplicación.
+        const handleWindowFocus = () => {
+            console.log('Header: Ventana recuperó el foco. Re-verificando autenticación.');
+            checkAuthStatus();
+        };
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('storage', handleStorageChange);
+            window.addEventListener('focus', handleWindowFocus);
+        }
+
+        // Limpieza: elimina los oyentes de eventos cuando el componente se desmonte
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('storage', handleStorageChange);
+                window.removeEventListener('focus', handleWindowFocus);
+            }
+        };
+    }, [checkAuthStatus]);
 
     const handleLogout = () => {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('accessToken');
             setIsLoggedIn(false);
+            setIsAdmin(false);
             router.push('/');
+            checkAuthStatus();
         }
     };
 
@@ -35,7 +83,13 @@ export default function Header() {
             <div className={styles.authLinksContainer}>
                 {isLoggedIn ? (
                     <>
-                        <Link href="/perfil" className={styles.profileLink} title="Mi Page">
+                        {isAdmin && (
+                            <Link href="/admin" className={styles.adminLink} title="Modo Administrador">
+                                {/* CAMBIO: Texto "Administración" en lugar del icono SVG */}
+                                Administración
+                            </Link>
+                        )}
+                        <Link href="/perfil" className={styles.profileLink} title="Mi Perfil">
                             <svg className={styles.profileIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd" />
                             </svg>
@@ -60,3 +114,4 @@ export default function Header() {
         </header>
     );
 }
+

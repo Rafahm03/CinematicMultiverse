@@ -72,17 +72,18 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
         );
         http.authorizeHttpRequests(authz -> authz
-
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/error").permitAll()
-                .requestMatchers("/activate/account/", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html" , "/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/pelicula/{titulo}").permitAll()
-                .requestMatchers(HttpMethod.GET, "/pelicula/**").permitAll()
-                .requestMatchers("/me/admin").hasRole("ADMIN")
+                .requestMatchers("/activate/account/", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html" , "/api-docs/**", "/h2-console/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/pelicula/{titulo}", "/pelicula/", "/pelicula/buscar").permitAll()
+                .requestMatchers(HttpMethod.POST, "/pelicula/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/pelicula/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/pelicula/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/user/admin/{username}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/me/admin").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/user/admin/").hasRole("ADMIN")
+                .requestMatchers("/user/**").hasRole("ADMIN")
                 .requestMatchers("/user/perfil", "/review/crearReview", "/review/myReviews", "/review/**", "/favoritos/**").authenticated()
-                .requestMatchers("/user/**", "/user/admin/").hasRole("ADMIN")
-                .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated());
-
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

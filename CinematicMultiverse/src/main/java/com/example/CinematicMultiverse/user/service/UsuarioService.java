@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.HashSet;
+
 
 @Service
 @RequiredArgsConstructor
@@ -119,23 +122,26 @@ public class UsuarioService {
     }
 
 
-    public Usuario editarUsuarioPorAdmin(EditUsuarioCmd editUsuarioCmd, String username) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
-
-        if (optionalUsuario.isEmpty()) {
-            throw new UsuarioNotFoundException("No se encontraron usuarios con ese username");
-        }
-
-        Usuario usuario = optionalUsuario.get();
+    @Transactional
+    public GetUsuarioDto editarUsuarioPorAdmin(EditUsuarioCmd editUsuarioCmd, String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new UsuarioNotFoundException("No se encontraron usuarios con ese username: " + username));
 
         usuario.setUsername(editUsuarioCmd.username());
-        usuario.setNombre(editUsuarioCmd.nombre());
         usuario.setEmail(editUsuarioCmd.email());
+        usuario.setNombre(editUsuarioCmd.nombre());
 
-        UserRole newRole = UserRole.valueOf(editUsuarioCmd.role().toUpperCase());
+        if (editUsuarioCmd.roles() != null && !editUsuarioCmd.roles().isEmpty()) {
+            Set<UserRole> nuevosRoles = editUsuarioCmd.roles().stream()
+                    .map(String::toUpperCase)
+                    .map(UserRole::valueOf)
+                    .collect(Collectors.toCollection(HashSet::new));
+            usuario.setRoles(nuevosRoles);
+        } else {
 
-        usuario.addRole(newRole);
-        return usuarioRepository.save(usuario);
+        }
+
+        Usuario usuarioActualizado = usuarioRepository.save(usuario);
+        return GetUsuarioDto.of(usuarioActualizado);
     }
-
 }

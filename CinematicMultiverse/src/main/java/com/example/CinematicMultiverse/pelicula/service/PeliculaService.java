@@ -65,11 +65,13 @@ public class PeliculaService {
                 .ifPresent(p -> {
                     throw new PeliculaAlreadyExistsException("La película con el título '" + editPeliculaCmd.titulo() + "' ya existe");
                 });
-        FileMetadata fileMetadata = storageService.store(file);
 
-        String filename = fileMetadata.getFilename();
-        String imageUrl = this.getImageUrl(filename);
+        String imageUrl = editPeliculaCmd.imagen();
 
+        if (file != null && !file.isEmpty()) {
+            FileMetadata fileMetadata = storageService.store(file);
+            imageUrl = this.getImageUrl(fileMetadata.getFilename());
+        }
 
         Set<Genero> generos = editPeliculaCmd.generos().stream()
                 .map(String::toUpperCase)
@@ -89,36 +91,35 @@ public class PeliculaService {
         return peliculaRepository.save(pelicula);
     }
 
-
-public String getImageUrl(String filename) {
-    return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/download/")
-            .path(filename)
-            .toUriString();
-}
+    public String getImageUrl(String filename) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/download/")
+                .path(filename)
+                .toUriString();
+    }
 
     @Transactional
-    public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, String titulo) {
-        Pelicula pelicula = peliculaRepository.findByTitulo(titulo)
-                .orElseThrow(() -> new PeliculaNotFoundException("No se encontraron películas con ese título"));
+    public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, UUID id) {
+        return peliculaRepository.findById(id)
+                .map(peliculaExistente -> {
+                    peliculaExistente.setTitulo(editPeliculaCmd.titulo());
+                    peliculaExistente.setDuracion(editPeliculaCmd.duracion());
+                    peliculaExistente.setAnio(editPeliculaCmd.anio());
+                    peliculaExistente.setImagen(editPeliculaCmd.imagen());
+                    peliculaExistente.setSinopsis(editPeliculaCmd.sinopsis());
+                    peliculaExistente.setPuntuacion(editPeliculaCmd.puntuacion());
 
-        pelicula.setTitulo(editPeliculaCmd.titulo());
-        pelicula.setDuracion(editPeliculaCmd.duracion());
-        pelicula.setAnio(editPeliculaCmd.anio());
-        pelicula.setImagen(editPeliculaCmd.imagen());
-        pelicula.setSinopsis(editPeliculaCmd.sinopsis());
-        pelicula.setPuntuacion(editPeliculaCmd.puntuacion());
+                    if (editPeliculaCmd.generos() != null) {
+                        Set<Genero> generos = editPeliculaCmd.generos().stream()
+                                .map(String::toUpperCase)
+                                .map(Genero::valueOf)
+                                .collect(Collectors.toSet());
+                        peliculaExistente.setGeneros(generos);
+                    }
 
-        if (editPeliculaCmd.generos() != null && !editPeliculaCmd.generos().isEmpty()) {
-            Set<Genero> generos = new HashSet<>();
-            for (String generoStr : editPeliculaCmd.generos()) {
-                Genero genero = Genero.valueOf(generoStr.toUpperCase());
-                generos.add(genero);
-            }
-            pelicula.setGeneros(generos);
-        }
-
-        return peliculaRepository.save(pelicula);
+                    return peliculaRepository.save(peliculaExistente);
+                })
+                .orElseThrow(() -> new PeliculaNotFoundException(id.toString()));
     }
 
     public void deleteByTitulo(String titulo) {
