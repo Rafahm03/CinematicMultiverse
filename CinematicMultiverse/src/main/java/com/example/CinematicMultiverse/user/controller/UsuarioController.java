@@ -29,6 +29,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -156,7 +158,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200",
                     description = "Usuario editado exitosamente",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))}),
+                            schema = @Schema(implementation = GetUsuarioDto.class))}),
             @ApiResponse(responseCode = "404",
                     description = "No se encontró el usuario con el username proporcionado",
                     content = @Content),
@@ -164,16 +166,12 @@ public class UsuarioController {
                     description = "No tienes permisos para editar a otro usuario",
                     content = @Content)
     })
-    public ResponseEntity<Usuario> editarUsuarioPorAdmin(@RequestBody EditUsuarioCmd editUsuarioCmd,
-                                                         @PathVariable String username,
-                                                         Authentication authentication) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<GetUsuarioDto> editarUsuarioPorAdmin(@RequestBody EditUsuarioCmd editUsuarioCmd,
+                                                               @PathVariable String username,
+                                                               Authentication authentication) {
 
-        if (authentication.getAuthorities().stream()
-                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
-            throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
-        }
-
-        Usuario usuarioEditado = usuarioService.editarUsuarioPorAdmin(editUsuarioCmd, username);
+        GetUsuarioDto usuarioEditado = usuarioService.editarUsuarioPorAdmin(editUsuarioCmd, username);
         return ResponseEntity.ok(usuarioEditado);
     }
 

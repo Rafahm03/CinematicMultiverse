@@ -1,3 +1,5 @@
+// src/main/java/com/example/CinematicMultiverse/security/jwt/access/JwtAuthenticationFilter.java
+
 package com.example.CinematicMultiverse.security.jwt.access;
 
 import com.example.CinematicMultiverse.user.model.Usuario;
@@ -44,18 +46,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/api-docs/**",
-            "/pelicula",
-            "/pelicula/**",
             "/h2-console/**"
     };
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // --- LOGS DE DEPURACIÓN AÑADIDOS ---
+        System.out.println("\n--- JwtAuthenticationFilter ---");
+        System.out.println("URL de la petición: " + request.getRequestURI());
+        System.out.println("Método HTTP: " + request.getMethod());
+        System.out.println("¿Debería filtrar (shouldNotFilter)? " + shouldNotFilter(request));
+        // --- FIN LOGS DE DEPURACIÓN ---
+
         String token = getJwtAccessTokenFromRequest(request);
+
+        // --- LOGS DE DEPURACIÓN AÑADIDOS ---
+        System.out.println("Token en el encabezado de autorización: " + (token != null ? "Presente" : "Ausente"));
+        // --- FIN LOGS DE DEPURACIÓN ---
 
         try {
             if (StringUtils.hasText(token) && jwtService.validateAccessToken(token)) {
+                // --- LOGS DE DEPURACIÓN AÑADIDOS ---
+                System.out.println("Token validado con éxito por JwtService.");
+                // --- FIN LOGS DE DEPURACIÓN ---
+
                 UUID id = jwtService.getUserIdFromAccessToken(token);
 
                 Optional<Usuario> result = usuarioRepository.findById(id);
@@ -70,11 +85,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     authenticationToken.setDetails(new WebAuthenticationDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    // --- LOGS DE DEPURACIÓN AÑADIDOS ---
+                    System.out.println("Usuario " + usuario.getUsername() + " autenticado y contexto de seguridad establecido.");
+                    System.out.println("Roles del usuario: " + usuario.getAuthorities());
+                    // --- FIN LOGS DE DEPURACIÓN ---
+                } else {
+                    System.out.println("ADVERTENCIA: Usuario del token no encontrado en la base de datos.");
                 }
+            } else if (StringUtils.hasText(token) && !shouldNotFilter(request)) {
+                // Si el token está presente pero la validación falla, y no es una URL pública
+                System.out.println("ERROR: Token presente pero inválido o expirado (no pasó validateAccessToken).");
+            } else if (!StringUtils.hasText(token) && !shouldNotFilter(request)) {
+                // Si no hay token y no es una URL pública (requerirá autenticación en SecurityConfig)
+                System.out.println("INFO: No se encontró token en la petición para una URL no pública. Dejar que SecurityConfig maneje la autenticación.");
             }
         } catch (JwtException ex) {
+            System.err.println("ERROR JwtException en filtro: " + ex.getMessage());
             resolver.resolveException(request, response, null, ex);
             return;
+        } finally {
+            System.out.println("--- Fin JwtAuthenticationFilter ---\n");
         }
 
         filterChain.doFilter(request, response);

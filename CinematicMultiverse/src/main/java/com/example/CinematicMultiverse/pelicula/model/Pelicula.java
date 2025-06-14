@@ -20,7 +20,6 @@ public class Pelicula {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NaturalId
     @Column(nullable = false)
     private String titulo;
 

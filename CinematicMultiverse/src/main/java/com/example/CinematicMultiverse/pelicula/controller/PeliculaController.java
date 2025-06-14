@@ -34,6 +34,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -122,13 +123,12 @@ public class PeliculaController {
 
 
 
-
     @Operation(summary = "Edita una película como admin")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Película editada exitosamente",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Pelicula.class))}),
+                            schema = @Schema(implementation = GetPeliculaDto.class))}),
             @ApiResponse(responseCode = "404",
                     description = "No se encontró la Película con el id proporcionado",
                     content = @Content),
@@ -137,13 +137,12 @@ public class PeliculaController {
                     content = @Content)
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{titulo}")
-    public ResponseEntity<Pelicula> editPelicula(@RequestBody EditPeliculaCmd editPeliculaCmd,
-                                                 @PathVariable String titulo
+    @PutMapping("/{id}")
+    public ResponseEntity<GetPeliculaDto> editPelicula(@RequestBody EditPeliculaCmd editPeliculaCmd,
+                                                       @PathVariable UUID id
     ) {
-
-        Pelicula peliculaEditada = peliculaService.editPelicula(editPeliculaCmd, titulo);
-        return ResponseEntity.ok(peliculaEditada);
+        Pelicula peliculaEditada = peliculaService.editPelicula(editPeliculaCmd, id);
+        return ResponseEntity.ok(GetPeliculaDto.of(peliculaEditada));
     }
 
     @Operation(summary = "Elimina una película por su titulo")
