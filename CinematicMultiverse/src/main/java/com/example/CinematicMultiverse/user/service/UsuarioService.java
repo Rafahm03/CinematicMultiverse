@@ -46,7 +46,7 @@ public class UsuarioService {
                 .password(passwordEncoder.encode(createUserRequest.password()))
                 .email(createUserRequest.email())
                 .roles(Set.of(UserRole.USER))
-                .activationToken(generateRandomActivationCode()) // Genera un token de activación
+                .activationToken(generateRandomActivationCode())
                 .build();
 
         usuarioRepository.save(usuario);
@@ -106,7 +106,8 @@ public class UsuarioService {
 
     }
 
-    public Usuario editarProfile(EditUsuarioCmd editUsuarioCmd, Usuario loggedUser) {
+    @Transactional
+    public GetUsuarioDto editarProfile(EditUsuarioCmd editUsuarioCmd, Usuario loggedUser) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(loggedUser.getUsername());
 
         if (optionalUsuario.isEmpty()) {
@@ -118,7 +119,9 @@ public class UsuarioService {
         usuario.setNombre(editUsuarioCmd.nombre());
         usuario.setEmail(editUsuarioCmd.email());
 
-        return usuarioRepository.save(usuario);
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        return GetUsuarioDto.of(usuarioGuardado);
     }
 
 

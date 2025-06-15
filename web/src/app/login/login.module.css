@@ -55,3 +55,17 @@
     flex-direction: column;
     gap: 1.5rem;
 }
+
+.formGroup input[type="text"],
+.formGroup input[type="email"],
+.formGroup input[type="password"],
+.formGroup input[type="number"],
+.formGroup input[type="search"],
+.formGroup input[type="tel"],
+.formGroup input[type="url"],
+.formGroup input:not([type])
+{
+    color: black;
+}
+
+

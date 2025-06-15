@@ -139,18 +139,20 @@ public class UsuarioController {
     @Operation(summary = "Edita el perfil del usuario logueado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Page editado exitosamente",
+                    description = "Perfil editado exitosamente",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))}),
+                            schema = @Schema(implementation = GetUsuarioDto.class))}),
             @ApiResponse(responseCode = "404",
                     description = "No se encontró el usuario con el username proporcionado",
                     content = @Content)
     })
-    public ResponseEntity<Usuario> editarPerfil(@RequestBody EditUsuarioCmd editUsuarioCmd,
-                                                @AuthenticationPrincipal Usuario loggedUser) {
-        Usuario usuarioEditado = usuarioService.editarProfile(editUsuarioCmd, loggedUser);
-        return ResponseEntity.ok(usuarioEditado);
+    public ResponseEntity<GetUsuarioDto> editarPerfil(@RequestBody EditUsuarioCmd editUsuarioCmd,
+                                                      @AuthenticationPrincipal Usuario loggedUser) {
+        GetUsuarioDto usuarioEditadoDto = usuarioService.editarProfile(editUsuarioCmd, loggedUser);
+
+        return ResponseEntity.ok(usuarioEditadoDto);
     }
+
 
     @PutMapping("/admin/{username}")
     @Operation(summary = "Edita un usuario como admin")

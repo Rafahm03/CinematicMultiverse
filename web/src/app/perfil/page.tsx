@@ -1,10 +1,11 @@
-// perfil.tsx
+// app/perfil/page.tsx (o el path que uses, asumo que es perfil.tsx)
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header/Header';
 import styles from './perfil.module.css';
+import { API_BASE_URL } from '../../../config'; // Asegúrate de que esta ruta sea correcta o define API_BASE_URL aquí
 
 type Usuario = {
     id: string;
@@ -34,7 +35,8 @@ export default function Perfil() {
         }
 
         try {
-            const res = await fetch('http://localhost:8080/me', {
+            // Usar API_BASE_URL para que se beneficie del rewrite de Next.js
+            const res = await fetch(`${API_BASE_URL}/me`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -49,13 +51,30 @@ export default function Perfil() {
             }
 
             if (!res.ok) {
-                throw new Error(`Error al cargar el perfil: ${res.status} - ${res.statusText}`);
+                const errorText = await res.text();
+                let errorMessage = `Error al cargar el perfil: ${res.status} - ${res.statusText}`;
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    errorMessage = errorJson.detail || errorJson.message || errorText;
+                } catch (e) {
+                    // No era un JSON, se usa el texto
+                }
+                throw new Error(errorMessage);
             }
 
-            const data: Usuario = await res.json();
-            setUsuario(data);
-            setNewUsername(data.username);
-            setNewNombre(data.nombre);
+            // Antes de intentar parsear como JSON, verifica el Content-Type y lee como texto para depurar
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data: Usuario = await res.json(); // Esto solo se llama si es JSON
+                setUsuario(data);
+                setNewUsername(data.username);
+                setNewNombre(data.nombre);
+            } else {
+                const textResponse = await res.text();
+                console.error("Received non-JSON response for /me:", textResponse);
+                throw new Error("Respuesta inesperada del servidor al cargar el perfil. No es JSON.");
+            }
+
         } catch (err: any) {
             console.error("Error fetching user profile:", err);
             setError(err.message || "Error desconocido al cargar el perfil.");
@@ -80,7 +99,8 @@ export default function Perfil() {
         }
 
         try {
-            const res = await fetch('http://localhost:8080/user/perfil', {
+            // Usar API_BASE_URL para que se beneficie del rewrite de Next.js
+            const res = await fetch(`${API_BASE_URL}/user/perfil`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -99,11 +119,34 @@ export default function Perfil() {
             }
 
             if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(`Error al actualizar el perfil: ${errorData.message || res.statusText}`);
+                const errorText = await res.text();
+                let errorMessage = `Error al actualizar el perfil: ${res.status} - ${res.statusText}`;
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    errorMessage = errorJson.detail || errorJson.message || errorText;
+                } catch (e) {
+                    // Si no es JSON, usa el texto bruto
+                }
+                throw new Error(errorMessage);
             }
 
-            const updatedUser: Usuario = await res.json();
+            // --- PASO DE DEPURACIÓN CRÍTICO ---
+            // Primero, lee la respuesta como texto para ver su contenido EXACTO.
+            const responseText = await res.text();
+            console.log("Raw response text from PUT /user/perfil:", responseText);
+
+            let updatedUser: Usuario;
+            // Luego, intenta parsear ese texto como JSON
+            try {
+                updatedUser = JSON.parse(responseText);
+            } catch (jsonParseError: any) {
+                // Si falla el parseo, muestra un error detallado con el texto problemático
+                console.error("JSON Parse Error for /user/perfil:", jsonParseError);
+                console.error("Problematic JSON string:", responseText); // Esto te mostrará el JSON exacto recibido
+                throw new Error(`Error de formato de datos al actualizar el perfil. Recibido: '${responseText.substring(0, 200)}'`);
+            }
+            // --- FIN PASO DE DEPURACIÓN CRÍTICO ---
+
             setUsuario(updatedUser);
             setIsEditing(false);
         } catch (err: any) {
