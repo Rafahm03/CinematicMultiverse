@@ -16,6 +16,7 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin-spring
@@ -29,7 +30,7 @@ services:
       - pgadmin-data:/var/lib/pgadmin
 
   app:
-    build: .
+    build: CinematicMultiverse
     container_name: cinematicmultiverse
     ports:
       - "8080:8080"
@@ -37,6 +38,20 @@ services:
       pg:
         condition: service_healthy
     restart: on-failure
+
+  frontend:
+
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: cinematicmultiverse-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      app:
+        condition: service_started
+    restart: on-failure
+
 volumes:
   pgdata:
   pgadmin-data:
