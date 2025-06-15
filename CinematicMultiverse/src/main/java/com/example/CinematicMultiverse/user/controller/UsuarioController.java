@@ -29,6 +29,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -139,41 +141,39 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200",
                     description = "Perfil editado exitosamente",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))}),
+                            schema = @Schema(implementation = GetUsuarioDto.class))}),
             @ApiResponse(responseCode = "404",
                     description = "No se encontró el usuario con el username proporcionado",
                     content = @Content)
     })
-    public ResponseEntity<Usuario> editarPerfil(@RequestBody EditUsuarioCmd editUsuarioCmd,
-                                                @AuthenticationPrincipal Usuario loggedUser) {
-        Usuario usuarioEditado = usuarioService.editarProfile(editUsuarioCmd, loggedUser);
-        return ResponseEntity.ok(usuarioEditado);
+    public ResponseEntity<GetUsuarioDto> editarPerfil(@RequestBody EditUsuarioCmd editUsuarioCmd,
+                                                      @AuthenticationPrincipal Usuario loggedUser) {
+        GetUsuarioDto usuarioEditadoDto = usuarioService.editarProfile(editUsuarioCmd, loggedUser);
+
+        return ResponseEntity.ok(usuarioEditadoDto);
     }
 
-    @PutMapping("/admin/{username}")
+
+    @PutMapping("/admin/{id}")
     @Operation(summary = "Edita un usuario como admin")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Usuario editado exitosamente",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))}),
+                            schema = @Schema(implementation = GetUsuarioDto.class))}),
             @ApiResponse(responseCode = "404",
-                    description = "No se encontró el usuario con el username proporcionado",
+                    description = "No se encontró el usuario con el ID proporcionado",
                     content = @Content),
             @ApiResponse(responseCode = "403",
                     description = "No tienes permisos para editar a otro usuario",
                     content = @Content)
     })
-    public ResponseEntity<Usuario> editarUsuarioPorAdmin(@RequestBody EditUsuarioCmd editUsuarioCmd,
-                                                         @PathVariable String username,
-                                                         Authentication authentication) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<GetUsuarioDto> editarUsuarioPorAdmin(@RequestBody EditUsuarioCmd editUsuarioCmd,
+                                                               @PathVariable UUID id,
+                                                               Authentication authentication) {
 
-        if (authentication.getAuthorities().stream()
-                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
-            throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
-        }
-
-        Usuario usuarioEditado = usuarioService.editarUsuarioPorAdmin(editUsuarioCmd, username);
+        GetUsuarioDto usuarioEditado = usuarioService.editarUsuarioPorAdmin(editUsuarioCmd, id);
         return ResponseEntity.ok(usuarioEditado);
     }
 

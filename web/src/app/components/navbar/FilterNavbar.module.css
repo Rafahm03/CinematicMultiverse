@@ -1,0 +1,134 @@
+/* components/navbar/FilterNavbar.module.css */
+
+.filterNavbar {
+    width: 250px;
+    background-color: #1c1c1c;
+    padding: 20px 15px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    flex-shrink: 0;
+    border-right: 1px solid #333;
+    box-sizing: border-box;
+}
+
+.navbarTitle {
+    background-color: #000;
+    color: #f0f0f0;
+    font-size: 1.6em;
+    padding: 10px 0;
+    text-align: center;
+    margin: -20px -15px 20px -15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid #333;
+}
+
+.filterSection {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sectionTitle {
+    color: #f0f0f0;
+    font-size: 1.2em;
+    margin-bottom: 0;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+}
+
+.buttonGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+}
+
+.filterButton {
+    background-color: #333;
+    color: #f0f0f0;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-align: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filterButton:hover:not(.active) {
+    background-color: #555;
+}
+
+.filterButton.active {
+    background-color: #e50914;
+    color: white;
+    font-weight: bold;
+}
+
+.clearFiltersButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.clearFiltersButton:hover {
+    background-color: #666;
+}
+
+@media (max-width: 768px) {
+    .filterNavbar {
+        width: 100%;
+        height: auto;
+        position: static;
+        box-shadow: none;
+        border-right: none;
+        border-bottom: 1px solid #333;
+        padding: 15px 10px;
+        gap: 15px;
+    }
+
+    .navbarTitle {
+        font-size: 1.4em;
+        padding: 8px 0;
+        margin: -15px -10px 15px -10px;
+    }
+
+    .filterSection {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sectionTitle {
+        font-size: 1.1em;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+
+    .buttonGrid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 8px;
+    }
+
+    .filterButton {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+
+    .clearFiltersButton {
+        width: 100%;
+        margin-top: 15px;
+        margin-bottom: 0;
+    }
+}

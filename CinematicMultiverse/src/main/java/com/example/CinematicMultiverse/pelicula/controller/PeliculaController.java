@@ -34,6 +34,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -115,13 +116,10 @@ public class PeliculaController {
                     description = "No se ha encontrado la película con el Titulo proporcionado",
                     content = @Content)
     })
-
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{titulo}")
     public GetPeliculaDto getPeliculaByTitulo(@PathVariable String titulo) {
         return peliculaService.getPeliculaDtoByTitulo(titulo);
     }
-
 
 
 
@@ -130,7 +128,7 @@ public class PeliculaController {
             @ApiResponse(responseCode = "200",
                     description = "Película editada exitosamente",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Pelicula.class))}),
+                            schema = @Schema(implementation = GetPeliculaDto.class))}),
             @ApiResponse(responseCode = "404",
                     description = "No se encontró la Película con el id proporcionado",
                     content = @Content),
@@ -139,13 +137,12 @@ public class PeliculaController {
                     content = @Content)
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{titulo}")
-    public ResponseEntity<Pelicula> editPelicula(@RequestBody EditPeliculaCmd editPeliculaCmd,
-                                                 @PathVariable String titulo
+    @PutMapping("/{id}")
+    public ResponseEntity<GetPeliculaDto> editPelicula(@RequestBody EditPeliculaCmd editPeliculaCmd,
+                                                       @PathVariable UUID id
     ) {
-
-        Pelicula peliculaEditada = peliculaService.editPelicula(editPeliculaCmd, titulo);
-        return ResponseEntity.ok(peliculaEditada);
+        Pelicula peliculaEditada = peliculaService.editPelicula(editPeliculaCmd, id);
+        return ResponseEntity.ok(GetPeliculaDto.of(peliculaEditada));
     }
 
     @Operation(summary = "Elimina una película por su titulo")
@@ -167,17 +164,21 @@ public class PeliculaController {
 
     @GetMapping("/buscar")
     public List<GetPeliculaDto> buscar(@RequestParam(value = "search", required = false) String search) {
-        log.info(search);
+        log.info("Buscando con: " + search);
 
         List<SearchCriteria> params = new ArrayList<>();
         if (search != null && !search.trim().isEmpty()) {
-            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-            Matcher matcher = pattern.matcher(search + ",");
+
+            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)((?:[^;]+?));");
+            Matcher matcher = pattern.matcher(search + ";");
+
             while (matcher.find()) {
-                log.info(matcher.group(1));
-                log.info(matcher.group(2));
-                log.info(matcher.group(3));
-                params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+                String key = matcher.group(1);
+                String operation = matcher.group(2);
+                String value = matcher.group(3);
+
+                log.info("Criterio encontrado -> Clave: " + key + ", Operador: " + operation + ", Valor: " + value);
+                params.add(new SearchCriteria(key, operation, value));
             }
         }
 

@@ -1,0 +1,533 @@
+/* detail.module.css */
+
+.pageContainer {
+    min-height: 100vh;
+    background-color: #0f0f0f;
+    color: #e5e5e5;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.mainContent {
+    flex-grow: 1;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.movieDetailHeader {
+    display: flex;
+    flex-direction: row;
+    background-color: #1a1a1a;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+    align-items: flex-start;
+    margin: 3rem;
+}
+
+.moviePosterContainer {
+    flex-shrink: 0;
+    width: 300px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-radius: 1rem;
+}
+
+.moviePoster {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    display: block;
+    border-radius: 1rem;
+}
+
+.movieInfoBlock {
+    flex-grow: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.titleRatingContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.movieTitle {
+    font-size: 2.5rem;
+    color: #facc15;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.movieRating {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    font-size: 1.8rem;
+    align-self: flex-start;
+    flex-shrink: 0;
+}
+
+.movieSynopsis {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #bbb;
+    margin-top: 1rem;
+}
+
+.movieMeta {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    color: #aaa;
+    font-size: 0.95rem;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.metaIcon {
+    font-size: 1.2rem;
+    color: #facc15;
+}
+
+.movieGenres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1rem;
+}
+
+.genreTag {
+    background-color: #333;
+    color: #facc15;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.loadingMessage, .errorMessage {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 5rem;
+    color: #facc15;
+}
+
+.errorMessage {
+    color: #ff4d4d;
+}
+
+.addToFavoritesButton {
+    background: none;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 20px;
+    width: 30%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.addToFavoritesButton:hover {
+    transform: translateY(-2px);
+}
+
+.addToFavoritesButton:active {
+    transform: translateY(0);
+}
+
+.feedbackMessage {
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    max-width: 800px;
+}
+
+.feedbackMessage.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.feedbackMessage.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.moviePosterContainer {
+    margin-right: 40px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+    .movieDetailHeader {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem;
+    }
+    .moviePosterContainer {
+        width: 250px;
+        margin-bottom: 1.5rem;
+        margin-right: 0;
+    }
+    .movieInfoBlock {
+        padding: 1.5rem;
+    }
+    .titleRatingContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+    .movieTitle {
+        font-size: 2rem;
+    }
+    .movieRating {
+        font-size: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    .movieMeta {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .mainContent {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+    .moviePosterContainer {
+        width: 200px;
+    }
+    .movieTitle {
+        font-size: 1.8rem;
+    }
+    .movieSynopsis {
+        font-size: 1rem;
+    }
+    .reviewCard {
+        padding: 1rem;
+    }
+    .reviewTitle {
+        font-size: 1rem;
+    }
+    .reviewContent {
+        font-size: 0.9rem;
+    }
+}
+
+.footer {
+    background-color: #0f0f0f;
+    color: #888;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    font-size: 0.9rem;
+}
+
+.reviewsSection {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.reviewsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.reviewsTitle {
+    color: #facc15;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.createReviewButton {
+    background: none;
+    border: none;
+    color: #facc15;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.createReviewButton:hover {
+    color: #fbbf24;
+    transform: scale(1.1);
+}
+
+.reviewList {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.reviewCard {
+    background-color: #2a2a2a;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.deleteReviewButton {
+    background: none;
+    border: none;
+    color: #ff4d4f;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: color 0.2s ease-in-out;
+    padding: 5px;
+}
+
+.deleteReviewButton:hover {
+    color: #e60000;
+}
+
+.reviewUser {
+    font-weight: bold;
+    color: #facc15;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.reviewRating {
+    color: #fbbf24;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.reviewComment {
+    font-size: 1rem;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.noReviews {
+    color: #ccc;
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 2rem;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    position: relative;
+    color: #e0e0e0;
+}
+
+.modalTitle {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+.modalCloseButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    color: #aaaaaa;
+    transition: color 0.2s ease;
+}
+
+.modalCloseButton:hover {
+    color: #ffc107;
+}
+
+.modalActions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+.modalButton {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex-grow: 1;
+}
+
+.confirmButton {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.confirmButton:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+.cancelButton {
+    background-color: #34495e;
+    color: white;
+}
+
+.cancelButton:hover {
+    background-color: #2c3e50;
+    transform: translateY(-2px);
+}
+
+.formGroup {
+    margin-bottom: 1rem;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #facc15;
+    font-weight: bold;
+}
+
+.formInput,
+.formTextarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.formTextarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+    border-color: #facc15;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.3);
+}
+
+.submitReviewButton {
+    background-color: #facc15;
+    color: black;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 100%;
+    font-weight: bold;
+}
+
+.submitReviewButton:hover {
+    background-color: #fbbf24;
+    transform: translateY(-2px);
+}
+
+.submitReviewButton:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+}
+
+.ratingStars {
+    display: flex;
+    gap: 0.2rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.star {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s ease;
+}
+
+.star.selected {
+    color: #facc15;
+}
+
+.ratingError {
+    color: #e50914;
+    font-size: 0.9rem;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.loginToReviewMessage {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #333;
+    color: #ddd;
+    border-radius: 8px;
+    font-size: 1.1em;
+    border: 1px solid #555;
+}

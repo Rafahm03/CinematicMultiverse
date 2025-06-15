@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.HashSet;
+
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class UsuarioService {
                 .password(passwordEncoder.encode(createUserRequest.password()))
                 .email(createUserRequest.email())
                 .roles(Set.of(UserRole.USER))
-                .activationToken(generateRandomActivationCode()) // Genera un token de activación
+                .activationToken(generateRandomActivationCode())
                 .build();
 
         usuarioRepository.save(usuario);
@@ -103,7 +106,8 @@ public class UsuarioService {
 
     }
 
-    public Usuario editarProfile(EditUsuarioCmd editUsuarioCmd, Usuario loggedUser) {
+    @Transactional
+    public GetUsuarioDto editarProfile(EditUsuarioCmd editUsuarioCmd, Usuario loggedUser) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(loggedUser.getUsername());
 
         if (optionalUsuario.isEmpty()) {
@@ -115,27 +119,32 @@ public class UsuarioService {
         usuario.setNombre(editUsuarioCmd.nombre());
         usuario.setEmail(editUsuarioCmd.email());
 
-        return usuarioRepository.save(usuario);
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        return GetUsuarioDto.of(usuarioGuardado);
     }
 
 
-    public Usuario editarUsuarioPorAdmin(EditUsuarioCmd editUsuarioCmd, String username) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
-
-        if (optionalUsuario.isEmpty()) {
-            throw new UsuarioNotFoundException("No se encontraron usuarios con ese username");
-        }
-
-        Usuario usuario = optionalUsuario.get();
+    @Transactional
+    public GetUsuarioDto editarUsuarioPorAdmin(EditUsuarioCmd editUsuarioCmd, UUID id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNotFoundException("No se encontró el usuario con el ID: " + id));
 
         usuario.setUsername(editUsuarioCmd.username());
-        usuario.setNombre(editUsuarioCmd.nombre());
         usuario.setEmail(editUsuarioCmd.email());
+        usuario.setNombre(editUsuarioCmd.nombre());
 
-        UserRole newRole = UserRole.valueOf(editUsuarioCmd.role().toUpperCase());
+        if (editUsuarioCmd.roles() != null && !editUsuarioCmd.roles().isEmpty()) {
+            Set<UserRole> nuevosRoles = editUsuarioCmd.roles().stream()
+                    .map(String::toUpperCase)
+                    .map(UserRole::valueOf)
+                    .collect(Collectors.toCollection(HashSet::new));
+            usuario.setRoles(nuevosRoles);
+        } else {
 
-        usuario.addRole(newRole);
-        return usuarioRepository.save(usuario);
+        }
+
+        Usuario usuarioActualizado = usuarioRepository.save(usuario);
+        return GetUsuarioDto.of(usuarioActualizado);
     }
-
 }

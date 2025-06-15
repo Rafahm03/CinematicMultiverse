@@ -1,10 +1,11 @@
 package com.example.CinematicMultiverse.user.dto;
 
+import java.util.Set;
+
 public record EditUsuarioCmd(
         String username,
-        String password,
         String nombre,
         String email,
-        String role
+        Set<String> roles
 ) {
 }

@@ -7,12 +7,15 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -53,16 +56,21 @@ public class JwtService {
                                 .toInstant()
                 );
 
+
+        List<String> roles = usuario.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(s -> s.replace("ROLE_", ""))
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .header().type(TOKEN_TYPE)
                 .and()
                 .subject(usuario.getId().toString())
                 .issuedAt(new Date())
                 .expiration(tokeExpirationDate)
+                .claim("roles", roles)
                 .signWith(secretKey)
                 .compact();
-
-
     }
 
     public UUID getUserIdFromAccessToken(String token) {

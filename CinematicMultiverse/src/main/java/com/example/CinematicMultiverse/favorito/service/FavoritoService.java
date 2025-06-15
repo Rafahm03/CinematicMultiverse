@@ -2,6 +2,7 @@ package com.example.CinematicMultiverse.favorito.service;
 
 import com.example.CinematicMultiverse.favorito.dto.EditFavoritoDto;
 import com.example.CinematicMultiverse.favorito.error.FavoritosVacioException;
+import com.example.CinematicMultiverse.favorito.error.PeliculaYaEnFavoritosException;
 import com.example.CinematicMultiverse.favorito.model.Favorito;
 import com.example.CinematicMultiverse.favorito.repo.FavoritoRepository;
 import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
@@ -32,7 +33,7 @@ public class FavoritoService {
                 .orElseThrow(() -> new RuntimeException("Película no encontrada"));
 
         if (favoritoRepository.findByUsuarioAndPelicula(usuario, pelicula).isPresent()) {
-            throw new RuntimeException("La película ya está en favoritos");
+            throw new PeliculaYaEnFavoritosException("La película '" + pelicula.getTitulo() + "' ya está en tu lista de favoritos.");
         }
 
         Favorito favorito = Favorito.builder()

@@ -1,0 +1,131 @@
+.pageWrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: black;
+}
+
+.logo {
+    font-weight: 1500;
+    font-size: 1.5rem;
+    color: goldenrod;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    cursor: default;
+}
+
+.activationTitle {
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    cursor: default;
+    margin-bottom: 2rem;
+}
+
+.leftSide {
+    flex: 1;
+    background-image: url('https://wallpapers.com/images/hd/movie-poster-background-wg5mxe6b7djul0a8.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.rightSide {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #0f0f0f;
+    color: #e5e5e5;
+}
+
+.statusContainer {
+    background-color: #1a1a1a;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.loadingMessage {
+    color: #ffd700;
+}
+
+.successMessage {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.errorMessage {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+.redirectText {
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: #bbb;
+}
+
+.loginLink {
+    color: goldenrod;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.loginLink:hover {
+    color: #d4af37;
+    text-decoration: underline;
+}
+
+.activateButton {
+    margin: 1rem;
+    padding: 10px 20px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.activateButton:hover {
+    background-color: #10b981;
+    color: white;
+}
+
+.activateButton:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .pageWrapper {
+        flex-direction: column;
+    }
+
+    .leftSide {
+        height: 200px;
+    }
+
+    .rightSide {
+        padding: 1.5rem;
+    }
+
+    .statusContainer {
+        padding: 1.5rem;
+    }
+}

@@ -1,0 +1,186 @@
+.pageWrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: black;
+}
+
+.logo {
+    font-weight: 1500;
+    font-size: 1.5rem;
+    color: goldenrod;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    cursor: default;
+}
+
+.registerTitle {
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    cursor: default;
+    margin-bottom: 2rem;
+}
+
+.leftSide {
+    flex: 1;
+    background-image: url('https://wallpapers.com/images/hd/movie-poster-background-wg5mxe6b7djul0a8.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.rightSide {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #0f0f0f;
+    color: #e5e5e5;
+}
+
+.registerForm {
+    background-color: #1a1a1a;
+    padding: 2.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formGroup label {
+    font-weight: bold;
+    color: #e5e5e5;
+    font-size: 0.95rem;
+}
+
+.registerInput {
+    padding: 0.75rem 1rem;
+    border: 1px solid #333;
+    border-radius: 0.5rem;
+    background-color: #2a2a2a;
+    color: #e5e5e5;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.registerInput:focus {
+    outline: none;
+    border-color: goldenrod;
+    box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.3);
+}
+
+.registerInput::placeholder {
+    color: #888;
+}
+
+.registerButton {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: goldenrod;
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.registerButton:hover {
+    background-color: #d4af37;
+    transform: translateY(-2px);
+}
+
+.registerButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.registerErrorMessage, .registerSuccessMessage {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.registerErrorMessage {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.registerSuccessMessage {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.loginLinkText {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #bbb;
+}
+
+.loginLink {
+    color: goldenrod;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.loginLink:hover {
+    color: #d4af37;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .pageWrapper {
+        flex-direction: column;
+    }
+
+    .leftSide {
+        height: 200px;
+    }
+
+    .rightSide {
+        padding: 1.5rem;
+    }
+
+    .registerForm {
+        padding: 2rem;
+    }
+    .fieldErrorMessage {
+        color: #ff4d4d;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        font-weight: 500;
+    }
+
+    .fieldHint {
+        color: #a0a0a0;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+
+    .inputError {
+        border-color: #ff4d4d !important;
+        box-shadow: 0 0 0 2px rgba(255, 77, 77, 0.3) !important;
+    }
+}
