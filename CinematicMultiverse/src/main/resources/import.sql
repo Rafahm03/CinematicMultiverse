@@ -208,7 +208,7 @@ VALUES
     ('b5ec2890-ce5b-4653-9466-42a7fdb91285', 'Evangelion: 3.0+1.0 Thrice Upon a Time',
      'El final de la épica saga de mechas y existencialismo.', 8.1,
      'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/8t5BmqgaYQQckYXF4Q9M1cVnqXt.jpg', 155, 2021),
-    ('a2b3c4d5-e6f7-48a9-b0c1-d2e3f4a5b6c7', 'Dune: Parte Dos', 'Paul Atreides se une a Chani y a los Fremen mientras busca venganza contra los conspiradores que destruyeron a su familia.', 8.7, 'https://pics.filmaffinity.com/Dune_Parte_Dos-288678616-large.jpg', 166, 2024),
+    ('a2b3c4d5-e6f7-48a9-b0c1-d2e3f4a5b6c7', 'Dune: Parte Dos', 'Paul Atreides se une a Chani y a los Fremen mientras busca venganza contra los conspiradores que destruyeron a su familia.', 8.7, 'https://pbs.twimg.com/media/GHRwW2gXYAAHtqp.jpg:large', 166, 2024),
     ('b3c4d5e6-f7a8-48b0-81d2-e3f4a5b6c7d8', 'Oppenheimer', 'La historia del físico J. Robert Oppenheimer y su papel en el desarrollo de la bomba atómica durante la Segunda Guerra Mundial.', 8.6, 'https://es.web.img2.acsta.net/c_310_420/pictures/23/05/25/13/41/1835431.jpg', 180, 2023),
     ('c4d5e6f7-a8b9-40c1-82e3-f4a5b6c7d8e9', 'Barbie', 'Barbie y Ken viajan al mundo real para encontrar la verdadera felicidad.', 7.0, 'https://es.web.img2.acsta.net/pictures/23/07/20/11/29/5479684.jpg', 114, 2023),
     ('d5e6f7a8-b9c0-41d2-83f4-a5b6c7d8e9f0', 'El Gato con Botas: El último deseo', 'El Gato con Botas descubre que su pasión por la aventura le ha pasado factura: ha gastado ocho de sus nueve vidas.', 7.8, 'https://es.web.img3.acsta.net/pictures/22/06/16/12/54/0504030.jpg', 102, 2022),

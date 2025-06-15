@@ -46,7 +46,6 @@ export default function AdminUsersPage() {
         }, 5000);
     }, []);
 
-    // Función para obtener usuarios
     const fetchUsers = useCallback(async () => {
         try {
             const token = localStorage.getItem('accessToken');
@@ -205,8 +204,8 @@ export default function AdminUsersPage() {
                 roles: formData.roles.split(',').map(r => r.trim().toUpperCase()).filter(r => r),
             };
 
-            const response = await fetch(`${API_BASE_URL}/user/admin/${editingUser.username}`, {
-                method: 'PUT',
+            const response = await fetch(`${API_BASE_URL}/user/admin/${editingUser.id}`, {
+                method: 'PUT', // <--- ¡ESTO ES LO QUE FALTABA!
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -237,7 +236,6 @@ export default function AdminUsersPage() {
             }
         }
     };
-
     const executeDeleteUser = async (username: string) => {
         const token = localStorage.getItem('accessToken');
         if (!token) {

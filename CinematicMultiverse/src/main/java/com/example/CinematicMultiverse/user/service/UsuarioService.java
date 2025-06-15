@@ -126,9 +126,9 @@ public class UsuarioService {
 
 
     @Transactional
-    public GetUsuarioDto editarUsuarioPorAdmin(EditUsuarioCmd editUsuarioCmd, String username) {
-        Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new UsuarioNotFoundException("No se encontraron usuarios con ese username: " + username));
+    public GetUsuarioDto editarUsuarioPorAdmin(EditUsuarioCmd editUsuarioCmd, UUID id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNotFoundException("No se encontró el usuario con el ID: " + id));
 
         usuario.setUsername(editUsuarioCmd.username());
         usuario.setEmail(editUsuarioCmd.email());

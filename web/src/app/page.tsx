@@ -308,12 +308,6 @@ export default function Home() {
                                                 <span>🎬 {peli.anio}</span>
                                             </div>
                                         </div>
-                                        <div className={styles.movieOverlay}>
-                                            <p className={styles.synopsis}>{peli.sinopsis}</p>
-                                            <p className={styles.details}>
-                                                Duración: {peli.duracion} min | Géneros: {peli.generos.join(', ')}
-                                            </p>
-                                        </div>
                                     </article>
                                 </Link>
                             ))

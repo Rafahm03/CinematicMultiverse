@@ -154,7 +154,7 @@ public class UsuarioController {
     }
 
 
-    @PutMapping("/admin/{username}")
+    @PutMapping("/admin/{id}")
     @Operation(summary = "Edita un usuario como admin")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -162,7 +162,7 @@ public class UsuarioController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = GetUsuarioDto.class))}),
             @ApiResponse(responseCode = "404",
-                    description = "No se encontró el usuario con el username proporcionado",
+                    description = "No se encontró el usuario con el ID proporcionado",
                     content = @Content),
             @ApiResponse(responseCode = "403",
                     description = "No tienes permisos para editar a otro usuario",
@@ -170,10 +170,10 @@ public class UsuarioController {
     })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GetUsuarioDto> editarUsuarioPorAdmin(@RequestBody EditUsuarioCmd editUsuarioCmd,
-                                                               @PathVariable String username,
+                                                               @PathVariable UUID id,
                                                                Authentication authentication) {
 
-        GetUsuarioDto usuarioEditado = usuarioService.editarUsuarioPorAdmin(editUsuarioCmd, username);
+        GetUsuarioDto usuarioEditado = usuarioService.editarUsuarioPorAdmin(editUsuarioCmd, id);
         return ResponseEntity.ok(usuarioEditado);
     }
 

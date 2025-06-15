@@ -27,7 +27,7 @@ public class Usuario implements UserDetails {
     private UUID id;
 
     //@NaturalId
-    @Column(unique = true, updatable = false)
+    @Column(unique = true)
     private String username;
 
     private String password;
