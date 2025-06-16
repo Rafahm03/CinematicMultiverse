@@ -1,6 +1,5 @@
 package com.example.CinematicMultiverse.resenhia.service;
 
-import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
 import com.example.CinematicMultiverse.pelicula.error.PeliculaNotFoundException;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.repo.PeliculaRepository;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,12 +67,31 @@ public class ReseniaService {
         return resenia;
     }
 
+    @Transactional
+    public Page<GetReseniaDto> findByUserId(String userId, Pageable pageable) {
+        UUID userUuid = UUID.fromString(userId);
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(userUuid);
+
+        if (usuarioOptional.isEmpty()) {
+            throw new UsuarioNotFoundException("No existe un usuario con ese ID: " + userId);
+        }
+
+        Page<Resenia> result = reseniaRepository.findAllByUsuario(usuarioOptional.get(), pageable);
+
+        if (result.isEmpty()) {
+            throw new ReseniaNotFoundException("No existen reseñas para el usuario con ese ID");
+        }
+
+        return result.map(GetReseniaDto::of);
+    }
+
 
     @Transactional
     public Page<GetReseniaDto> findByUsername(String username, Pageable pageable) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByUsername(username);
 
-        if (!usuarioOptional.isPresent()) {
+        if (usuarioOptional.isEmpty()) {
             throw new UsuarioNotFoundException("No existe un usuario con ese username");
         }
 
@@ -86,8 +103,6 @@ public class ReseniaService {
 
         return result.map(GetReseniaDto::of);
     }
-
-
 
 
     @Transactional
@@ -128,9 +143,4 @@ public class ReseniaService {
 
         reseniaRepository.delete(resenia);
     }
-
-
-
-
-
 }
