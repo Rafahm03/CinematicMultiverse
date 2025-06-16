@@ -5,45 +5,48 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './Header.module.css';
-import { userHasRole } from '../../../../utils/jwt'; // Ajusta la ruta si es necesario
+import { userHasRole, decodeToken } from '../../../../utils/jwt';
 
 export default function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [username, setUsername] = useState<string | null>(null);
     const router = useRouter();
 
-    // Función para verificar y actualizar el estado de autenticación
     const checkAuthStatus = useCallback(() => {
         if (typeof window !== 'undefined') {
-            // *** IMPORTANTE: Asegúrate de que esta clave coincide con la que usas al guardar el token en localStorage ***
-            // Si tu login guarda como 'jwtToken', cambia 'accessToken' a 'jwtToken' aquí.
             const token = localStorage.getItem('accessToken');
 
             console.log('Header: Token leído de localStorage:', token ? 'Token presente' : 'Token ausente');
 
             setIsLoggedIn(!!token);
             if (token) {
-                const adminStatus = userHasRole(token, 'ADMIN'); // 'ADMIN' debe coincidir EXACTAMENTE con el rol en tu JWT
+                const decodedToken = decodeToken(token);
+
+                const adminStatus = userHasRole(token, 'ADMIN');
+
+                const usernameFromToken = decodedToken ? decodedToken.sub : null;
+
                 console.log('Header: ¿Es administrador?', adminStatus);
+                console.log('Header: Nombre de usuario:', usernameFromToken);
+
                 setIsAdmin(adminStatus);
+                setUsername(usernameFromToken);
             } else {
                 setIsAdmin(false);
+                setUsername(null);
             }
         }
     }, []);
 
     useEffect(() => {
-        // Verificación inicial cuando el componente se monta
         checkAuthStatus();
 
-        // Escucha eventos 'storage' (ej., cuando otra pestaña inicia/cierra sesión)
         const handleStorageChange = () => {
             console.log('Header: Evento de storage detectado. Re-verificando autenticación.');
             checkAuthStatus();
         };
 
-        // Escucha el evento 'focus' de la ventana (cuando la pestaña del navegador recupera el foco)
-        // Esto ayuda a re-sincronizar el estado si el usuario cambia de pestaña o vuelve a la aplicación.
         const handleWindowFocus = () => {
             console.log('Header: Ventana recuperó el foco. Re-verificando autenticación.');
             checkAuthStatus();
@@ -54,7 +57,6 @@ export default function Header() {
             window.addEventListener('focus', handleWindowFocus);
         }
 
-        // Limpieza: elimina los oyentes de eventos cuando el componente se desmonte
         return () => {
             if (typeof window !== 'undefined') {
                 window.removeEventListener('storage', handleStorageChange);
@@ -68,6 +70,7 @@ export default function Header() {
             localStorage.removeItem('accessToken');
             setIsLoggedIn(false);
             setIsAdmin(false);
+            setUsername(null);
             router.push('/');
             checkAuthStatus();
         }
@@ -85,8 +88,12 @@ export default function Header() {
                     <>
                         {isAdmin && (
                             <Link href="/admin" className={styles.adminLink} title="Modo Administrador">
-                                {/* CAMBIO: Texto "Administración" en lugar del icono SVG */}
                                 Administración
+                            </Link>
+                        )}
+                        {username && (
+                            <Link href={`/my-reviews/${username}`} className={styles.reviewsLink} title="Mis Reseñas">
+                                Mis Reseñas
                             </Link>
                         )}
                         <Link href="/perfil" className={styles.profileLink} title="Mi Perfil">
@@ -114,4 +121,3 @@ export default function Header() {
         </header>
     );
 }
-

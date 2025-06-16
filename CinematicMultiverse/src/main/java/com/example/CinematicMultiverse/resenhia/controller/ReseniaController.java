@@ -72,20 +72,19 @@ public class ReseniaController {
                             )})}),
             @ApiResponse(responseCode = "404", description = "No se han encontrado reviews", content = @Content)
     })
-    @GetMapping("/myReviews/{username}")
+    @GetMapping("/myReviews/{userId}")
     public ResponseEntity<Page<GetReseniaDto>> getMyAllReviews(
-            @PathVariable String username,
+            @PathVariable String userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<GetReseniaDto> reviews = reseniaService.findByUsername(username, pageable);
+        Page<GetReseniaDto> reviews = reseniaService.findByUserId(userId, pageable);
 
         if (reviews.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-
         return ResponseEntity.ok(reviews);
     }
 
