@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +30,6 @@ public class PeliculaService {
 
     private final PeliculaRepository peliculaRepository;
     private final StorageService storageService;
-
 
     @Transactional
     public GetPeliculaDto getPeliculaDtoByTitulo(String titulo) {
@@ -60,17 +58,22 @@ public class PeliculaService {
         return result.map(GetPeliculaDto::of);
     }
 
+    @Transactional
     public Pelicula save(EditPeliculaCmd editPeliculaCmd, MultipartFile file) {
         peliculaRepository.findByTitulo(editPeliculaCmd.titulo())
                 .ifPresent(p -> {
                     throw new PeliculaAlreadyExistsException("La película con el título '" + editPeliculaCmd.titulo() + "' ya existe");
                 });
 
-        String imageUrl = editPeliculaCmd.imagen();
+        String imageUrl = null;
 
         if (file != null && !file.isEmpty()) {
             FileMetadata fileMetadata = storageService.store(file);
-            imageUrl = this.getImageUrl(fileMetadata.getFilename());
+            imageUrl = fileMetadata.getURL();
+        } else if (editPeliculaCmd.imagen() != null && !editPeliculaCmd.imagen().isEmpty()) {
+            imageUrl = editPeliculaCmd.imagen();
+        } else {
+            imageUrl = "https://placehold.co/300x450/000000/FFFFFF?text=No+Image";
         }
 
         Set<Genero> generos = editPeliculaCmd.generos().stream()
@@ -91,35 +94,39 @@ public class PeliculaService {
         return peliculaRepository.save(pelicula);
     }
 
-    public String getImageUrl(String filename) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(filename)
-                .toUriString();
-    }
 
     @Transactional
-    public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, UUID id) {
-        return peliculaRepository.findById(id)
-                .map(peliculaExistente -> {
-                    peliculaExistente.setTitulo(editPeliculaCmd.titulo());
-                    peliculaExistente.setDuracion(editPeliculaCmd.duracion());
-                    peliculaExistente.setAnio(editPeliculaCmd.anio());
-                    peliculaExistente.setImagen(editPeliculaCmd.imagen());
-                    peliculaExistente.setSinopsis(editPeliculaCmd.sinopsis());
-                    peliculaExistente.setPuntuacion(editPeliculaCmd.puntuacion());
-
-                    if (editPeliculaCmd.generos() != null) {
-                        Set<Genero> generos = editPeliculaCmd.generos().stream()
-                                .map(String::toUpperCase)
-                                .map(Genero::valueOf)
-                                .collect(Collectors.toSet());
-                        peliculaExistente.setGeneros(generos);
-                    }
-
-                    return peliculaRepository.save(peliculaExistente);
-                })
+    public Pelicula editPelicula(EditPeliculaCmd editPeliculaCmd, UUID id, MultipartFile file) {
+        Pelicula peliculaExistente = peliculaRepository.findById(id)
                 .orElseThrow(() -> new PeliculaNotFoundException(id.toString()));
+
+        String newImageUrl = peliculaExistente.getImagen();
+
+        if (file != null && !file.isEmpty()) {
+            FileMetadata fileMetadata = storageService.store(file);
+            newImageUrl = fileMetadata.getURL();
+        } else if (editPeliculaCmd.imagen() != null && !editPeliculaCmd.imagen().isEmpty()) {
+            newImageUrl = editPeliculaCmd.imagen();
+        } else if (editPeliculaCmd.imagen() != null && editPeliculaCmd.imagen().isEmpty()) {
+            newImageUrl = "https://placehold.co/300x450/000000/FFFFFF?text=No+Image";
+        }
+
+        peliculaExistente.setTitulo(editPeliculaCmd.titulo());
+        peliculaExistente.setDuracion(editPeliculaCmd.duracion());
+        peliculaExistente.setAnio(editPeliculaCmd.anio());
+        peliculaExistente.setImagen(newImageUrl);
+        peliculaExistente.setSinopsis(editPeliculaCmd.sinopsis());
+        peliculaExistente.setPuntuacion(editPeliculaCmd.puntuacion());
+
+        if (editPeliculaCmd.generos() != null) {
+            Set<Genero> generos = editPeliculaCmd.generos().stream()
+                    .map(String::toUpperCase)
+                    .map(Genero::valueOf)
+                    .collect(Collectors.toSet());
+            peliculaExistente.setGeneros(generos);
+        }
+
+        return peliculaRepository.save(peliculaExistente);
     }
 
     public void deleteByTitulo(String titulo) {
@@ -146,8 +153,4 @@ public class PeliculaService {
                 .map(GetPeliculaDto::of)
                 .toList();
     }
-
-
-
 }
-

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -48,7 +49,20 @@ public class FileSystemStorageService implements StorageService {
     public FileMetadata store(MultipartFile file)  {
         try {
             String filename =  store(file.getBytes(), file.getOriginalFilename(), file.getContentType());
-            return LocalFileMetadataImpl.of(filename);
+
+            String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/download/")
+                    .path(filename)
+                    .toUriString();
+
+            LocalFileMetadataImpl metadata = LocalFileMetadataImpl.builder()
+                    .id(filename)
+                    .filename(filename)
+                    .URL(uri)
+                    .build();
+
+            return metadata;
+
         } catch (Exception ex) {
             throw new StorageException("Error storing file: " + file.getOriginalFilename(), ex);
         }
@@ -82,7 +96,6 @@ public class FileSystemStorageService implements StorageService {
 
     private String store(byte[] file, String filename, String contentType) throws Exception {
 
-        // Limpiamos el nombre del fichero
         String newFilename = StringUtils.cleanPath(filename);
 
         if (file.length == 0)
@@ -105,7 +118,6 @@ public class FileSystemStorageService implements StorageService {
         String newFilename = filename;
 
         while(Files.exists(rootLocation.resolve(newFilename))) {
-            // Tratamos de generar un nuevo
             String extension = StringUtils.getFilenameExtension(newFilename);
             String name = newFilename.replace("." + extension, "");
 
