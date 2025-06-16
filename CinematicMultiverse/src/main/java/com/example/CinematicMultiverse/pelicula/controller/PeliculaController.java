@@ -4,10 +4,7 @@ import com.example.CinematicMultiverse.pelicula.dto.EditPeliculaCmd;
 import com.example.CinematicMultiverse.pelicula.dto.GetPeliculaDto;
 import com.example.CinematicMultiverse.pelicula.model.Pelicula;
 import com.example.CinematicMultiverse.pelicula.service.PeliculaService;
-import com.example.CinematicMultiverse.user.dto.EditUsuarioCmd;
-import com.example.CinematicMultiverse.user.dto.GetUsuarioDto;
-import com.example.CinematicMultiverse.user.model.Usuario;
-import com.example.CinematicMultiverse.util.SearchCriteria;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,19 +22,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import com.example.CinematicMultiverse.util.SearchCriteria;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Log
 @RestController
@@ -47,8 +42,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class PeliculaController {
     private final PeliculaService peliculaService;
-
-
+    private final ObjectMapper objectMapper;
 
     @Operation(summary = "Guarda una nueva película")
     @ApiResponses(value = {
@@ -63,17 +57,20 @@ public class PeliculaController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/guardar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GetPeliculaDto> guardarPelicula(
-            @RequestPart("editPeliculaCmd") EditPeliculaCmd editPeliculaCmd,
-            @RequestPart("file") MultipartFile file) {
+            @RequestPart("editPeliculaCmd") String editPeliculaCmdJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+        try {
+            EditPeliculaCmd editPeliculaCmd = objectMapper.readValue(editPeliculaCmdJson, EditPeliculaCmd.class);
 
-        Pelicula nuevaPelicula = peliculaService.save(editPeliculaCmd, file);
+            Pelicula nuevaPelicula = peliculaService.save(editPeliculaCmd, file);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(GetPeliculaDto.of(nuevaPelicula));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(GetPeliculaDto.of(nuevaPelicula));
+        } catch (IOException e) {
+            log.warning("Error al parsear el JSON de la película: " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
-
-
-
 
     @Operation(summary = "Obtiene todas las películas")
     @ApiResponses(value = {
@@ -121,8 +118,6 @@ public class PeliculaController {
         return peliculaService.getPeliculaDtoByTitulo(titulo);
     }
 
-
-
     @Operation(summary = "Edita una película como admin")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -137,12 +132,21 @@ public class PeliculaController {
                     content = @Content)
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<GetPeliculaDto> editPelicula(@RequestBody EditPeliculaCmd editPeliculaCmd,
-                                                       @PathVariable UUID id
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GetPeliculaDto> editPelicula(
+            @RequestPart("editPeliculaCmd") String editPeliculaCmdJson,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @PathVariable UUID id
     ) {
-        Pelicula peliculaEditada = peliculaService.editPelicula(editPeliculaCmd, id);
-        return ResponseEntity.ok(GetPeliculaDto.of(peliculaEditada));
+        try {
+            EditPeliculaCmd editPeliculaCmd = objectMapper.readValue(editPeliculaCmdJson, EditPeliculaCmd.class);
+
+            Pelicula peliculaEditada = peliculaService.editPelicula(editPeliculaCmd, id, file);
+            return ResponseEntity.ok(GetPeliculaDto.of(peliculaEditada));
+        } catch (IOException e) {
+            log.warning("Error al parsear el JSON de la película para edición: " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @Operation(summary = "Elimina una película por su titulo")
@@ -184,7 +188,4 @@ public class PeliculaController {
 
         return peliculaService.search(params);
     }
-
-
-
 }

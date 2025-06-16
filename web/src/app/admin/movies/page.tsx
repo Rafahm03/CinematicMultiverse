@@ -123,13 +123,13 @@ export default function AdminMoviesPage() {
             const bodyPeliculaBlob = new Blob([JSON.stringify(movieData)], { type: 'application/json' });
 
             const form = new FormData();
+            form.append('editPeliculaCmd', bodyPeliculaBlob, 'bodypelicula.json');
+
             if (file) {
                 form.append('file', file);
             } else {
                 form.append('file', new Blob([""], { type: "application/octet-stream" }), "");
             }
-            form.append('editPeliculaCmd', bodyPeliculaBlob, 'bodypelicula.json');
-
 
             const response = await fetch(`${API_BASE_URL}/pelicula/guardar`, {
                 method: 'POST',
@@ -174,13 +174,12 @@ export default function AdminMoviesPage() {
             anio: movie.anio.toString(),
             generos: movie.generos.join(', '),
         });
+        setFile(null);
     };
 
     const handleUpdateMovie = async (e: React.FormEvent) => {
         e.preventDefault();
         const token = localStorage.getItem('accessToken');
-
-        console.log('handleUpdateMovie: Token leído:', token);
 
         if (!token || !editingMovie) {
             showMessage('No estás autenticado o no hay película seleccionada para editar. Por favor, inicia sesión.', true);
@@ -199,13 +198,23 @@ export default function AdminMoviesPage() {
                 generos: formData.generos.split(',').map(g => g.trim().toUpperCase()).filter(g => g),
             };
 
+            const bodyPeliculaBlob = new Blob([JSON.stringify(movieData)], { type: 'application/json' });
+
+            const form = new FormData();
+            form.append('editPeliculaCmd', bodyPeliculaBlob, 'bodypelicula.json');
+
+            if (file) {
+                form.append('file', file);
+            } else {
+                form.append('file', new Blob([""], { type: "application/octet-stream" }), "");
+            }
+
             const response = await fetch(`${API_BASE_URL}/pelicula/${editingMovie.id}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(movieData),
+                body: form,
             });
 
             if (!response.ok) {
@@ -275,7 +284,6 @@ export default function AdminMoviesPage() {
         setShowConfirmModal(true);
     };
 
-    // Maneja la confirmación en el modal
     const handleConfirm = () => {
         if (confirmAction) {
             confirmAction();
@@ -285,7 +293,6 @@ export default function AdminMoviesPage() {
         setConfirmMessage('');
     };
 
-    // Maneja la cancelación en el modal
     const handleCancelConfirm = () => {
         setShowConfirmModal(false);
         setConfirmAction(null);
@@ -346,8 +353,15 @@ export default function AdminMoviesPage() {
                                 <input type="text" id="imagen" name="imagen" value={formData.imagen} onChange={handleFormChange} placeholder="URL de la imagen (si no subes un archivo)" />
                             </div>
                             <div className={styles.formGroup}>
-                                <label htmlFor="file">Subir Imagen (Opcional):</label>
+                                <label htmlFor="file">Subir Nueva Imagen (Opcional):</label>
                                 <input type="file" id="file" name="file" onChange={handleFileChange} accept="image/*" />
+                                {file && <p className={styles.fileSelected}>Archivo seleccionado: {file.name}</p>}
+                                {editingMovie?.imagen && !file && (
+                                    <div className={styles.currentImagePreview}>
+                                        <p>Imagen actual:</p>
+                                        <img src={editingMovie.imagen} alt="Imagen actual" className={styles.currentImage} />
+                                    </div>
+                                )}
                             </div>
                             <div className={styles.formGroup}>
                                 <label htmlFor="duracion">Duración (minutos):</label>
