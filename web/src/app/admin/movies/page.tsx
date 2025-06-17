@@ -342,10 +342,6 @@ export default function AdminMoviesPage() {
                                 <input type="number" id="puntuacion" name="puntuacion" value={formData.puntuacion} onChange={handleFormChange} step="0.1" min="0" max="10" required />
                             </div>
                             <div className={styles.formGroup}>
-                                <label htmlFor="imagen">URL de la Imagen:</label>
-                                <input type="text" id="imagen" name="imagen" value={formData.imagen} onChange={handleFormChange} placeholder="URL de la imagen (si no subes un archivo)" />
-                            </div>
-                            <div className={styles.formGroup}>
                                 <label htmlFor="file">Subir Imagen (Opcional):</label>
                                 <input type="file" id="file" name="file" onChange={handleFileChange} accept="image/*" />
                             </div>

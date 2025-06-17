@@ -219,9 +219,7 @@ export default function MyReviewsPage() {
                             <div key={review.id} className={styles.reviewCard}>
                                 <div className={styles.reviewCardHeader}>
                                     <h3 className={styles.reviewMovieTitle}>
-                                        <Link href={`/movie/${encodeURIComponent(review.tituloPelicula)}`}>
-                                            {review.tituloPelicula}
-                                        </Link>
+                                        {review.tituloPelicula}
                                     </h3>
                                     {loggedInUserId && loggedInUserId === review.userId && (
                                         <button
