@@ -75,6 +75,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/error").permitAll()
                 .requestMatchers("/activate/account/", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html" , "/api-docs/**", "/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/pelicula/{titulo}", "/pelicula/", "/pelicula/buscar").permitAll()
+                .requestMatchers("/download/**").permitAll()
                 .requestMatchers("/user/perfil", "/review/crearReview", "/review/myReviews", "/review/**", "/favoritos/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/pelicula/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/pelicula/**").hasRole("ADMIN")
