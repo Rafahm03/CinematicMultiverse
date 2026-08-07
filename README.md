@@ -2,17 +2,17 @@
 
 CinematicMultiverse es una **plataforma web completa** diseñada para los amantes del cine, que combina un potente **backend (API REST)** con un **frontend dinámico (Next.js con TypeScript)**. Permite a los usuarios registrarse, explorar películas, dejar reseñas, marcar favoritos y mucho más. También incluye un robusto panel de administración para la gestión integral de usuarios y contenido cinematográfico.
 
-Spring Boot 3
-Java 21
-Spring Security
-JWT + Refresh Tokens
-PostgreSQL
-Docker
-Swagger
-Next.js 15
-TypeScript
-React
-Role-Based Authentication
+Spring Boot 3,
+Java 21,
+Spring Security,
+JWT + Refresh Tokens,
+PostgreSQL,
+Docker,
+Swagger,
+Next.js 15,
+TypeScript,
+React,
+Role-Based Authentication,
 Email Verification
 
 ---
